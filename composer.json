@@ -1,0 +1,15 @@
+{
+    "name": "langivi/important-reminder",
+    "description": "Reminder for important events",
+    "type": "project",
+    "require": {
+        "symfony/dependency-injection": "^6.0",
+        "twig/twig": "^3.0",
+        "ext-fileinfo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Langivi\\ImportantReminder\\": "src/"
+        }
+    }
+}
