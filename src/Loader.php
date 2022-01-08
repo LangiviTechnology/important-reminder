@@ -2,6 +2,7 @@
 
 namespace Langivi\ImportantReminder;
 
+use Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Loader
@@ -26,6 +27,11 @@ class Loader
         $this->containerBuilder->set('twig', $twig);
     }
 
+    public function setRouter() 
+    {
+        // $this->containerBuilder->set('router', new Router());
+    }
+
     public function getContainer()
     {
         return $this->containerBuilder;
@@ -35,7 +41,7 @@ class Loader
     {
         $object = new self();
         $object->setTemplateEngine();
+        $object->setRouter();
         return $object;
-
     }
 }
