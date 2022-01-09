@@ -27,9 +27,10 @@ class Loader
         $this->containerBuilder->set('twig', $twig);
     }
 
-    public function setRouter() 
+    public function setRouter()
     {
-        // $this->containerBuilder->set('router', new Router());
+        $routes = require_once 'routes.php';
+        $this->containerBuilder->set('router', new Router($routes));
     }
 
     public function getContainer()

@@ -7,8 +7,8 @@ class Router
 	/**
 	 * @var \ArrayObject<Route>
 	 */
-	private $routes;
-	public function __construct(array $routes =[])
+	private ArrayObject $routes;
+	public function __construct(array $routes = [])
 	{
 		$this->routes = new ArrayObject();
 

@@ -30,7 +30,11 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         servePublic($publicUri, $res, $result);
         return;
     }
-    $res->setHeader("Content-Type", "text/plain; charset=utf-8");
-    $res->send("Hello world\n");
+    /**
+     * @var $router Router
+     */
+    $router = $loader->getContainer()->get('router');
+    $action = $router->matchFromPath($req->uri, $req->method);
+    $action->call($req, $res);
 
 });
