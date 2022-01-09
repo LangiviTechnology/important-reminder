@@ -2,6 +2,7 @@
 <?php
 
 use Langivi\ImportantReminder\Loader;
+use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Router;
 
 require 'vendor/autoload.php';
@@ -35,7 +36,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
      * @var $router Router
      */
     $router = $loader->getContainer()->get('router');
-    $action = $router->matchFromPath($req->uri, $req->method);
+    $action = $router->matchFromPath($req->uri, HttpMethods::from($req->method));
     $action->call($req, $res);
 
 });

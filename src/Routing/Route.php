@@ -20,7 +20,7 @@ class Route
     private $controller;
 
     /**
-     * @var array<string>
+     * @var array<HttpMethods>
      */
     private $methods = [];
 
@@ -47,11 +47,11 @@ class Route
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
         [$controller, $action] = explode("::", $this->controller);
-        $controllerClass = new $controller; //TODO rewrite to DI inject;
+        $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
         $controllerClass->{$action}($request, $response);
     }
 
-    public function match(string $uri, string $method): bool
+    public function match(string $uri, HttpMethods $method): bool
     {
         $requestPath = strtolower(trim($uri, '{\}'));
         $routePath = strtolower(trim($this->path, '{\}'));
@@ -76,7 +76,7 @@ class Route
         return $this->path;
     }
 
-    public function getController():string
+    public function getController(): string
     {
         return $this->controller;
     }
