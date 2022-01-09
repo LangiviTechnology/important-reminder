@@ -2,6 +2,7 @@
 <?php
 
 use Langivi\ImportantReminder\Loader;
+use Langivi\ImportantReminder\Routing\Router;
 
 require 'vendor/autoload.php';
 

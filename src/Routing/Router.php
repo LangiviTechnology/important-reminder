@@ -1,11 +1,13 @@
 <?php
+namespace Langivi\ImportantReminder\Routing;
 
-use Route;
+
+use ArrayObject;
 
 class Router
 {
 	/**
-	 * @var \ArrayObject<Route>
+	 * @var ArrayObject<Route>
 	 */
 	private ArrayObject $routes;
 	public function __construct(array $routes = [])
@@ -23,10 +25,6 @@ class Router
 		return $this;
 	}
 
-	public function match(HttpRequest $request): Route
-	{
-		return $this->matchFromPath($request->getUri(), $request->getMethod());
-	}
 
 	public function matchFromPath(string $uri, string $method): Route
 	{
@@ -37,6 +35,6 @@ class Router
 			return $route;
 		}
 		
-		throw new Exception('No route found for method ' . $method, 404);
+		throw new \Exception('No route found for method ' . $method, 404);
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Langivi\ImportantReminder\Routing;
+
 class Route
 {
     /**
@@ -42,7 +44,7 @@ class Route
         $this->vars = $vars;
     }
 
-    public function call(HttpRequest $request, HttpResponse $response)
+    public function call(\HttpRequest $request, \HttpResponse $response)
     {
         [$controller, $action] = explode("::", $this->controller);
         $controllerClass = new $controller; //TODO rewrite to DI inject;

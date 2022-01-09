@@ -2,7 +2,7 @@
 
 namespace Langivi\ImportantReminder;
 
-use Router;
+use Langivi\ImportantReminder\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Loader
@@ -29,7 +29,7 @@ class Loader
 
     public function setRouter()
     {
-        $routes = require_once 'routes.php';
+        $routes = require_once './Routing/routes.php';
         $this->containerBuilder->set('router', new Router($routes));
     }
 
