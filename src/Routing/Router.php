@@ -26,7 +26,7 @@ class Router
 	}
 
 
-	public function matchFromPath(string $uri, HttpMethods $method): Route
+	public function matchFromPath(string $uri, HttpMethods $method): Route | null
 	{
 		foreach ($this->routes as $route) {
 			if ($route->match($uri, $method) === false) {
@@ -34,7 +34,8 @@ class Router
 			}
 			return $route;
 		}
-		
-		throw new \Exception('No route found for method ' . $method->value, 404);
+		return null;
+		// TODO: Add Main error handler
+		// throw new \Exception('No route found for method ' . $method->value, 404);
 	}
 }

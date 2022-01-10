@@ -2,8 +2,12 @@
 
 namespace Langivi\ImportantReminder\Routing;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 class Route
 {
+    private readonly ContainerBuilder $container;
+
     /**
      * @var string
      */
@@ -36,7 +40,7 @@ class Route
 
     private function __construct(string $name, string $path, string $controller, array $methods = ['GET'], array $vars = [])
     {
-        // TODO is need chech exist at least one method?
+        // TODO is need check exist at least one method?
         $this->name = $name;
         $this->path = $path;
         $this->controller = $controller;
@@ -47,8 +51,9 @@ class Route
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
         [$controller, $action] = explode("::", $this->controller);
-        $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
-        $controllerClass->{$action}($request, $response);
+        $this->$container->$controller->{$action}($request, $response);
+        // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
+        // $controllerClass->{$action}($request, $response);
     }
 
     public function match(string $uri, HttpMethods $method): bool
@@ -94,5 +99,11 @@ class Route
     public function hasVars(): bool
     {
         return boolval($this->vars);
+    }
+
+    public function setContainer(ContainerBuilder $container): self
+    {
+        $this->container = $container;
+        return $this;
     }
 }
