@@ -29,7 +29,7 @@ class Loader
 
     public function setRouter()
     {
-        $routes = require_once './Routing/routes.php';
+        $routes = require_once __DIR__ . '/Routing/routes.php';
         $this->containerBuilder->set('router', new Router($routes));
     }
 
