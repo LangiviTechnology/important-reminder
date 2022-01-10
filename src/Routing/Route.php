@@ -11,27 +11,27 @@ class Route
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var string
      */
-    private $path;
+    private string $path;
 
     /**
      * @var string
      */
-    private $controller;
+    private string $controller;
 
     /**
      * @var array<HttpMethods>
      */
-    private $methods = [];
+    private array $methods = [];
 
     /**
      * @var array<string>
      */
-    private $vars = [];
+    private array $vars = [];
 
     public static function create(string $path, string $controller, string $name = '', array $methods = ['GET'], array $vars = [])
     {
