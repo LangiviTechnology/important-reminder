@@ -27,6 +27,19 @@ class Loader
         $this->containerBuilder->set('twig', $twig);
     }
 
+    public function injectControllers()
+    {
+        foreach (glob('\Langivi\ImportantReminder\Controllers\*.php') as $file)
+        {
+            require_once $file;
+            $controller = basename($file, '.php');
+            $reflector = new ReflectionClass($controller);
+            $parametrs = $constructor->getParameters();
+
+            $this->containerBuilder->set($controller, new $controller($dependencies));
+        }  
+    }
+
     public function setRouter()
     {
         $routes = require_once __DIR__ . '/Routing/routes.php';
@@ -42,6 +55,7 @@ class Loader
     {
         $object = new self();
         $object->setTemplateEngine();
+        $object->injectControllers();
         $object->setRouter();
         return $object;
     }
