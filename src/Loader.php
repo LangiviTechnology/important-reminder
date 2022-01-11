@@ -29,21 +29,37 @@ class Loader
 
     public function injectControllers()
     {
-        foreach (glob('\Langivi\ImportantReminder\Controllers\*.php') as $file)
+        echo 'Inject controllers:' . PHP_EOL;
+        foreach (glob(__DIR__ . '/Controllers/*.php') as $file)
         {
-            require_once $file;
+            // $c = require_once $file;
             $controller = basename($file, '.php');
-            $reflector = new ReflectionClass($controller);
-            $parametrs = $constructor->getParameters();
+            echo $controller . PHP_EOL;
+            
+            $reflector = new \ReflectionClass(('\Langivi\ImportantReminder\Controllers\\' . $controller));
 
-            $this->containerBuilder->set($controller, new $controller($dependencies));
+            if (!$reflector->isInstantiable()) {
+                throw new Exception("Class is not instantiable");
+            }
+    
+            $constructor = $reflector->getConstructor();
+            if (is_null($constructor)) {
+                continue;
+            }
+
+            $parametrs = $constructor->getParameters();
+            // var_dump($parametrs[0]->getType());
+            $this->containerBuilder->setParameter('cont', 89569);
+            $this->containerBuilder->register($controller, ('\Langivi\ImportantReminder\Controllers\\' . $controller))->addArgument($this->containerBuilder);
+
+            // var_dump($this->containerBuilder->get($controller));
         }  
     }
 
     public function setRouter()
     {
         $routes = require_once __DIR__ . '/Routing/routes.php';
-        $this->containerBuilder->set('router', new Router($routes));
+        $this->containerBuilder->set('router', new Router($routes, $this->containerBuilder));
     }
 
     public function getContainer()
