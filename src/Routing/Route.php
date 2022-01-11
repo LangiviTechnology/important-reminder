@@ -51,7 +51,7 @@ class Route
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
         [$controller, $action] = explode("::", $this->controller);
-        $this->$container->$controller->{$action}($request, $response);
+        $this->container->$controller->{$action}($request, $response);
         // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
         // $controllerClass->{$action}($request, $response);
     }
