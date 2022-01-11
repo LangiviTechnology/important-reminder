@@ -3,6 +3,7 @@
 namespace Langivi\ImportantReminder;
 
 use Langivi\ImportantReminder\Routing\Router;
+use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Loader
@@ -12,6 +13,7 @@ class Loader
     public function __construct()
     {
         $this->containerBuilder = new ContainerBuilder();
+        $this->containerBuilder->register('messageGenerator', 'Langivi\ImportantReminder\Services\MessageGenerator');
     }
 
     public function setTemplateEngine()
@@ -34,7 +36,7 @@ class Loader
         {
             // $c = require_once $file;
             $controller = basename($file, '.php');
-            echo $controller . PHP_EOL;
+            echo ' - ' . $controller . PHP_EOL;
             
             $reflector = new \ReflectionClass(('\Langivi\ImportantReminder\Controllers\\' . $controller));
 
@@ -48,12 +50,24 @@ class Loader
             }
 
             $parametrs = $constructor->getParameters();
-            // var_dump($parametrs[0]->getType());
-            $this->containerBuilder->setParameter('cont', 89569);
-            $this->containerBuilder->register($controller, ('\Langivi\ImportantReminder\Controllers\\' . $controller))->addArgument($this->containerBuilder);
+            $dependencies = [];
+            foreach ($parametrs as $parametr) {
+                if ($parametr->name === 'container') {
+                    $dependencies[] = $this->containerBuilder;
+                    continue;
+                }
+                if ($this->containerBuilder->has($parametr->name)) {
+                    $dependencies[] = $this->containerBuilder->get($parametr->name);
+                }
 
+            }
+            var_dump(count ($dependencies));
+            $this->containerBuilder
+                ->register($controller, ('\Langivi\ImportantReminder\Controllers\\' . $controller))
+                ->addArgument(...$dependencies);
             // var_dump($this->containerBuilder->get($controller));
         }  
+        echo 'Injecteing done' . PHP_EOL;
     }
 
     public function setRouter()

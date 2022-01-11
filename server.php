@@ -6,13 +6,13 @@ use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Router;
 
 require 'vendor/autoload.php';
-
+$PORT = 81; 
 echo "Server is starting ...";
 $loader = Loader::boot();
-$httpServer = new HttpServer(81, "tcp://0.0.0.0");
+$httpServer = new HttpServer($PORT, "tcp://0.0.0.0");
 $httpServer->setPublicPath(__DIR__ . DIRECTORY_SEPARATOR . "public");
 $result = new finfo();
-echo "Started on PORT 81";
+echo "Started on PORT " . $PORT . PHP_EOL;
 
 function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
