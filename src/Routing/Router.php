@@ -7,17 +7,18 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Router
 {
+    private static ContainerBuilder $container;
 	/**
 	 * @var ArrayObject<Route>
 	 */
 	private ArrayObject $routes;
 
-	public function __construct(array $routes = [], ContainerBuilder $container = null)
+	public function __construct(array $routes = [])
 	{
 		$this->routes = new ArrayObject();
 
 		foreach ($routes as $route) {
-			$route->setContainer($container);
+			$route->setContainer(self::$container);
 			$this->add($route);
 		}
 	}
@@ -40,4 +41,9 @@ class Router
 		// TODO: Add Main error handler
 		// throw new \Exception('No route found for method ' . $method->value, 404);
 	}
+
+    public static function setContainer(ContainerBuilder $container): void
+    {
+        self::$container = $container;
+    }
 }

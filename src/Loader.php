@@ -36,56 +36,39 @@ class Loader
 
     public function injectControllers()
     {
-
-        $this->containerBuilder->register('index_controller', IndexController::class)
-            ->setAutowired(true)->setPublic(true);
-        $this->containerBuilder->setAlias(IndexController::class, 'index_controller',)->setPublic(true);
-
-
-//        $this->containerBuilder->set( Loader::class,)->addTag('loader')->setAutowired(true)->setPublic(true);
-
-//        $this->containerBuilder->register( IndexController::class, IndexController::class)->addTag('index_controller')->setAutoconfigured(true)->setAutowired(true);
-//        $this->containerBuilder->autowire('loader',Loader::class);
-//        $this->containerBuilder->compile();
-//        var_dump($loader);
-
         echo 'Inject controllers:' . PHP_EOL;
-        foreach (glob(__DIR__ . '/Controllers/*.php') as $file)
-        {
-            // $c = require_once $file;
+        foreach (glob(__DIR__ . '/Controllers/*.php') as $file) {
             $controller = basename($file, '.php');
             echo ' - ' . $controller . PHP_EOL;
-
             $reflector = new \ReflectionClass(('\Langivi\ImportantReminder\Controllers\\' . $controller));
+            if ($reflector->isAbstract())
+                continue;
+            $definition = $this->containerBuilder->register($reflector->getShortName(), $reflector->getName())
+                ->setAutowired(true)->setPublic(true);
+            $definition->addMethodCall('setContainer', [$this->containerBuilder]);
+            $this->containerBuilder->setAlias($reflector->getName(), $reflector->getShortName(),)->setPublic(true);
 
             if (!$reflector->isInstantiable()) {
-                throw new Exception("Class is not instantiable");
+                throw new \Exception("Class is not instantiable");
             }
+        }
+        return $this;
+    }
 
-            $constructor = $reflector->getConstructor();
-            if (is_null($constructor)) {
-                continue;
-            }
-
-            $parametrs = $constructor->getParameters();
-            $dependencies = [];
-            foreach ($parametrs as $parametr) {
-                if ($parametr->name === 'container') {
-                    $dependencies[] = $this->containerBuilder;
-                    continue;
-                }
-                if ($this->containerBuilder->has($parametr->name)) {
-                    $dependencies[] = $this->containerBuilder->get($parametr->name);
-                }
-
-            $this->containerBuilder->set($controller, new $controller($dependencies));
-        }  
+    public function injectServices()
+    {
+        $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
+        $loader->load('configurator.php');
+        return $this;
     }
 
     public function setRouter()
     {
+        Router::setContainer($this->containerBuilder);
         $routes = require_once __DIR__ . '/Routing/routes.php';
-        $this->containerBuilder->set('router', new Router($routes, $this->containerBuilder));
+        $router = new Router($routes);
+        $this->containerBuilder->set('router', $router);
+        return $this;
     }
 
     public function getContainer()
@@ -97,13 +80,15 @@ class Loader
     {
         $object = new self();
         $object->setTemplateEngine();
-        $object->injectServices();
-        $object->injectControllers();
+        $object->containerBuilder->set(Loader::class, $object);
+        $object->injectServices()
+            ->injectControllers()
+            ->setRouter();
         $object->containerBuilder->compile();
-        var_dump($object->containerBuilder->get('index_controller'));
+        var_dump($object->containerBuilder->get('IndexController'));
         var_dump($object->containerBuilder->getParameter('env'));
         var_dump($object->containerBuilder->getServiceIds());
-        $object->setRouter();
+
         return $object;
     }
 }

@@ -9,9 +9,15 @@ class IndexController
 {
     private readonly ContainerBuilder $containerBuilder;
 
-    public function __construct(ContainerBuilder $container, TestService $controller)
+    public function __construct(TestService $controller)
     {
-        $this->containerBuilder = $container;
+
+    }
+
+    public function setContainer(ContainerBuilder $container): self
+    {
+        $this->container = $container;
+        return $this;
     }
 
     public function index(\HttpRequest $request, \HttpResponse $response)

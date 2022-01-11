@@ -1,6 +1,6 @@
 <?php 
 
-namespace Langivi\ImportantReminder\Service;
+namespace Langivi\ImportantReminder\Services;
 
 class MessageGenerator
 {
