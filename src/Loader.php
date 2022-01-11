@@ -6,6 +6,7 @@ use Langivi\ImportantReminder\Controllers\IndexController;
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\TestService;
 use Symfony\Component\Config\FileLocator;
+use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
@@ -17,6 +18,7 @@ class Loader
     public function __construct()
     {
         $this->containerBuilder = new ContainerBuilder();
+        $this->containerBuilder->register('messageGenerator', 'Langivi\ImportantReminder\Services\MessageGenerator');
     }
 
     public function setTemplateEngine()
@@ -47,30 +49,43 @@ class Loader
 //        $this->containerBuilder->compile();
 //        var_dump($loader);
 
+        echo 'Inject controllers:' . PHP_EOL;
+        foreach (glob(__DIR__ . '/Controllers/*.php') as $file)
+        {
+            // $c = require_once $file;
+            $controller = basename($file, '.php');
+            echo ' - ' . $controller . PHP_EOL;
 
-//        var_dump($this->containerBuilder);
-//        foreach (glob('\Langivi\ImportantReminder\Controllers\*.php') as $file)
-//        {
-//            require_once $file;
-//            $controller = basename($file, '.php');
-//            $reflector = new ReflectionClass($controller);
-//            $parametrs = $constructor->getParameters();
-//
-//            $this->containerBuilder->set($controller, new $controller($dependencies));
-//        }
-    }
+            $reflector = new \ReflectionClass(('\Langivi\ImportantReminder\Controllers\\' . $controller));
 
-    public function injectServices()
-    {
-        $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
-        $loader->load('configurator.php');
+            if (!$reflector->isInstantiable()) {
+                throw new Exception("Class is not instantiable");
+            }
 
+            $constructor = $reflector->getConstructor();
+            if (is_null($constructor)) {
+                continue;
+            }
+
+            $parametrs = $constructor->getParameters();
+            $dependencies = [];
+            foreach ($parametrs as $parametr) {
+                if ($parametr->name === 'container') {
+                    $dependencies[] = $this->containerBuilder;
+                    continue;
+                }
+                if ($this->containerBuilder->has($parametr->name)) {
+                    $dependencies[] = $this->containerBuilder->get($parametr->name);
+                }
+
+            $this->containerBuilder->set($controller, new $controller($dependencies));
+        }  
     }
 
     public function setRouter()
     {
         $routes = require_once __DIR__ . '/Routing/routes.php';
-        $this->containerBuilder->set('router', new Router($routes));
+        $this->containerBuilder->set('router', new Router($routes, $this->containerBuilder));
     }
 
     public function getContainer()

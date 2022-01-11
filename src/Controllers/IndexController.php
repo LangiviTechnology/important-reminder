@@ -1,14 +1,17 @@
 <?php
 namespace Langivi\ImportantReminder\Controllers;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\TestService;
 
 class IndexController
 {
-    public function __construct(TestService $controller)
+    private readonly ContainerBuilder $containerBuilder;
+
+    public function __construct(ContainerBuilder $container, TestService $controller)
     {
-        var_dump("helo", $controller);
+        $this->containerBuilder = $container;
     }
 
     public function index(\HttpRequest $request, \HttpResponse $response)

@@ -3,6 +3,7 @@ namespace Langivi\ImportantReminder\Routing;
 
 
 use ArrayObject;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Router
 {
@@ -10,11 +11,13 @@ class Router
 	 * @var ArrayObject<Route>
 	 */
 	private ArrayObject $routes;
-	public function __construct(array $routes = [])
+
+	public function __construct(array $routes = [], ContainerBuilder $container = null)
 	{
 		$this->routes = new ArrayObject();
 
 		foreach ($routes as $route) {
+			$route->setContainer($container);
 			$this->add($route);
 		}
 	}
@@ -24,7 +27,6 @@ class Router
 		$this->routes->offsetSet($route->getName(), $route);
 		return $this;
 	}
-
 
 	public function matchFromPath(string $uri, HttpMethods $method): Route | null
 	{

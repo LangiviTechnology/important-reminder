@@ -50,8 +50,10 @@ class Route
 
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
-        [$controller, $action] = explode("::", $this->controller);
-        $this->container->$controller->{$action}($request, $response);
+        [$controllerName, $action] = explode("::", $this->controller);
+
+        if ($this->container) $controller = $this->container->get($controllerName);
+        $controller->{$action}($request, $response);
         // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
         // $controllerClass->{$action}($request, $response);
     }
