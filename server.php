@@ -6,13 +6,13 @@ use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Router;
 
 require 'vendor/autoload.php';
-$PORT = 81; 
-echo "Server is starting ...";
+const PORT = 81; 
+echo "Server is starting ..." . PHP_EOL;
 $loader = Loader::boot();
-$httpServer = new HttpServer($PORT, "tcp://0.0.0.0");
+$httpServer = new HttpServer(PORT, "tcp://0.0.0.0");
 $httpServer->setPublicPath(__DIR__ . DIRECTORY_SEPARATOR . "public");
 $result = new finfo();
-echo "Started on PORT " . $PORT . PHP_EOL;
+echo "Started on PORT " . PORT . PHP_EOL;
 
 function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
@@ -36,17 +36,19 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
      * @var $router Router
      */
     $router = $loader->getContainer()->get('router');
+    
     $metod = HttpMethods::tryFrom($req->method);
     // TODO: Add Main error handler
     if (!$metod) {
         $res->setStatusCode(404);
-        $res->send('Inorrect method' . $req->method);
+        $res->send('Incorrect method' . $req->method);
         return;
     }
+    
     $route = $router->matchFromPath($req->uri, $metod);
     if (!$route) {
         $res->setStatusCode(404);
-        $res->send('Path not found');
+        $res->send('Path not found ' . $req->uri);
         return;
     }
     $route->call($req, $res);
