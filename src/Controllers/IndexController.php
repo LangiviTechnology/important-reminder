@@ -8,8 +8,10 @@ use Langivi\ImportantReminder\Services\TestService;
 class IndexController
 {
     private readonly ContainerBuilder $containerBuilder;
+    public function __construct(
+        private TestService $controller,
 
-    public function __construct(TestService $controller)
+    )
     {
 
     }

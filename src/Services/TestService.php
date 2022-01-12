@@ -3,7 +3,7 @@ namespace Langivi\ImportantReminder\Services;
 
 class TestService
 {
-public function __construct( Test2Service $service)
+public function __construct(private Test2Service $service)
 {
 }
 }

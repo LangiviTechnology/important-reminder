@@ -18,7 +18,6 @@ class Loader
     public function __construct()
     {
         $this->containerBuilder = new ContainerBuilder();
-        $this->containerBuilder->register('messageGenerator', 'Langivi\ImportantReminder\Services\MessageGenerator');
     }
 
     public function setTemplateEngine()
@@ -85,9 +84,9 @@ class Loader
             ->injectControllers()
             ->setRouter();
         $object->containerBuilder->compile();
-        var_dump($object->containerBuilder->get('IndexController'));
-        var_dump($object->containerBuilder->getParameter('env'));
-        var_dump($object->containerBuilder->getServiceIds());
+        var_dump($object->containerBuilder->get(IndexController::class));
+//        var_dump($object->containerBuilder->getParameter('env'));
+//        var_dump($object->containerBuilder->getServiceIds());
 
         return $object;
     }
