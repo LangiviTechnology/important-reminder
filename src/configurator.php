@@ -15,7 +15,7 @@ return function(ContainerConfigurator $configurator) {
     require_once 'services.php';
     require_once 'parameters.php';
 
-    var_dump($services);
+    // var_dump($services);
 //    $configurator->import('services.php');
 
 

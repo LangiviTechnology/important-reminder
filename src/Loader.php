@@ -84,7 +84,7 @@ class Loader
             ->injectControllers()
             ->setRouter();
         $object->containerBuilder->compile();
-        var_dump($object->containerBuilder->get(IndexController::class));
+        // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
 //        var_dump($object->containerBuilder->getServiceIds());
 
