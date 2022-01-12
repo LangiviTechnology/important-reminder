@@ -10,10 +10,8 @@ class IndexController
     private readonly ContainerBuilder $containerBuilder;
     public function __construct(
         private TestService $controller,
-
     )
     {
-
     }
 
     public function setContainer(ContainerBuilder $container): self
@@ -25,6 +23,6 @@ class IndexController
     public function index(\HttpRequest $request, \HttpResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("Hello world\n");
+        $response->send("Index controller: Index\n");
     }
 }
