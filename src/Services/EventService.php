@@ -4,9 +4,9 @@ namespace Langivi\ImportantReminder\Services;
 
 use  Langivi\ImportantReminder\Entity\Event;
 
-class UserService
+class EventService
 {
-	public function __construct(private UserRepository $userRepository)
+	public function __construct()
 	{
 	}
 
