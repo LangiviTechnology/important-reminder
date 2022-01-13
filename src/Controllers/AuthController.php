@@ -4,8 +4,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\UserService;
+use Langivi\ImportantReminder\Controllers\AbstractController;
 
-class AuthController
+class AuthController extends AbstractController
 {
     private readonly ContainerBuilder $containerBuilder;
     public function __construct(
@@ -14,11 +15,11 @@ class AuthController
     {
     }
 
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
-    }
+    // public function setContainer(ContainerBuilder $container): self
+    // {
+    //     $this->container = $container;
+    //     return $this;
+    // }
 
     public function register(\HttpRequest $request, \HttpResponse $response)
     {

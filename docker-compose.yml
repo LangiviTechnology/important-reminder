@@ -10,6 +10,8 @@ services:
        - ./:/app
      ports:
        - 81:81
+     depends_on:
+      - postgres
    postgres:
       image: postgres 
       environment: 

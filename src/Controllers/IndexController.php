@@ -3,22 +3,24 @@ namespace Langivi\ImportantReminder\Controllers;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
+use Langivi\ImportantReminder\Services\EventService;
 use Langivi\ImportantReminder\Services\TestService;
+use Langivi\ImportantReminder\Controllers\AbstractController;
 
-class IndexController
+class IndexController extends AbstractController
 {
     private readonly ContainerBuilder $containerBuilder;
     public function __construct(
-        private TestService $controller,
+        private TestService $controller, EventService $eventService
     )
     {
     }
 
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
-    }
+    // public function setContainer(ContainerBuilder $container): self
+    // {
+    //     $this->container = $container;
+    //     return $this;
+    // }
 
     public function index(\HttpRequest $request, \HttpResponse $response)
     {

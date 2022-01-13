@@ -5,8 +5,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\TestService;
 use Langivi\ImportantReminder\Services\EventService;
+use Langivi\ImportantReminder\Controllers\AbstractController;
 
-class EventController
+class EventController extends AbstractController
 {
     private readonly ContainerBuilder $containerBuilder;
     public function __construct(
@@ -15,11 +16,11 @@ class EventController
     {
     }
 
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
-    }
+    // public function setContainer(ContainerBuilder $container): self
+    // {
+    //     $this->container = $container;
+    //     return $this;
+    // }
 
     public function findOne(\HttpRequest $request, \HttpResponse $response)
     {
