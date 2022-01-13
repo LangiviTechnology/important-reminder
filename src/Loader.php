@@ -4,7 +4,7 @@ namespace Langivi\ImportantReminder;
 
 use Langivi\ImportantReminder\Controllers\IndexController;
 use Langivi\ImportantReminder\Routing\Router;
-use Langivi\ImportantReminder\Services\TestService;
+use Langivi\ImportantReminder\Services\LoggerHandler;
 use Symfony\Component\Config\FileLocator;
 use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,6 +22,7 @@ class Loader
 
     public function setTemplateEngine()
     {
+        echo 'Set template' . PHP_EOL;
         if (!is_dir(__DIR__ . '/templates')) {
             mkdir(__DIR__ . '/templates');
         }
@@ -56,6 +57,7 @@ class Loader
 
     public function injectServices()
     {
+        echo 'Inject Services' . PHP_EOL;
         $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
         $loader->load('configurator.php');
         return $this;
@@ -63,10 +65,24 @@ class Loader
 
     public function setRouter()
     {
+        echo 'Set router' . PHP_EOL;
         Router::setContainer($this->containerBuilder);
         $routes = require_once __DIR__ . '/Routing/routes.php';
         $router = new Router($routes);
         $this->containerBuilder->set('router', $router);
+        return $this;
+    }
+
+    public function setupLogger()
+    {
+        echo 'Setup Logger' . PHP_EOL;
+        $logFileName = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
+        // $logHandler = $this->containerBuilder->get( 'LoggerHandler');
+        // $logHandler->setFilename($logFileName);
+        // var_dump($this->containerBuilder);
+        $logger = $this->containerBuilder->get("LoggerService");
+        // $logger->setHandler($logHandler);
+        $logger->setMode('DEBUG');
         return $this;
     }
 
@@ -82,7 +98,8 @@ class Loader
         $object->containerBuilder->set(Loader::class, $object);
         $object->injectServices()
             ->injectControllers()
-            ->setRouter();
+            ->setRouter()
+            ->setupLogger();
         $object->containerBuilder->compile();
         // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
