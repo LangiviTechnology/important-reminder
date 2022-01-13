@@ -8,9 +8,7 @@ use Langivi\ImportantReminder\Services\TestService;
 class EventController
 {
     private readonly ContainerBuilder $containerBuilder;
-    public function __construct(
-        private EventService $controller,
-    )
+    public function __construct()
     {
     }
 
