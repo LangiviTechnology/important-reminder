@@ -1,2 +1,2 @@
 #!/bin/bash
-wget   -O - https://raw.githubusercontent.com/LangiviTechnology/fileio/dev/build_fileio  | bash
+wget   -O - https://raw.githubusercontent.com/LangiviTechnology/fileio/db-adoptation/build_fileio  | bash

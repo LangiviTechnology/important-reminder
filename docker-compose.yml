@@ -18,6 +18,6 @@ services:
         POSTGRES_PASSWORD: "4reminder321c"
         PGDATA: "/var/postgresql/data"
       volumes:
-        - ./data:/var/postgresql/data
+        - ../data:/var/postgresql/data
       ports:
         - "5432:5432"

@@ -4,6 +4,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\TestService;
+use Langivi\ImportantReminder\Services\EventService;
 
 class EventController
 {
