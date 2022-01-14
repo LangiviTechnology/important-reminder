@@ -45,7 +45,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
     if (!$metod) {
         $res->setStatusCode(404);
         $res->send('Incorrect method' . $req->method);
-        $logger->error('Incorrect method' . $req->method);
+        $logger->error('Incorrect method' . [$req->method]);
         return;
     }
     
@@ -53,9 +53,10 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
     if (!$route) {
         $res->setStatusCode(404);
         $res->send('Path not found ' . $req->uri);
-        $logger->warning('Path not found ' . $req->uri, $metod);
+        $logger->warning('Path not found ' . [$req->uri, $metod]);
         return;
     }
+    // throw new Error('test error');
     $route->call($req, $res);
 
 });
