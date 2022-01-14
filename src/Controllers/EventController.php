@@ -3,12 +3,15 @@ namespace Langivi\ImportantReminder\Controllers;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
-use Langivi\ImportantReminder\Services\TestService;
+use Langivi\ImportantReminder\Services\LoggerService;
 
 class EventController
 {
     private readonly ContainerBuilder $containerBuilder;
-    public function __construct()
+    public function __construct(
+        private LoggerService $logger,
+
+    )
     {
     }
 
@@ -34,6 +37,8 @@ class EventController
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: add\n");
+        $this->logger->info('Add event');
+
     }
 
 	public function update(\HttpRequest $request, \HttpResponse $response)
