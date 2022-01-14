@@ -14,10 +14,6 @@ class LoggerService
     private $handler;
     private $mode = 'DEFAULT';
 
-	public function __construct()
-	{
-	}
-
     public function setHandler(LoggerHandlerInterface $handler) 
     {
         $this->handler = $handler;

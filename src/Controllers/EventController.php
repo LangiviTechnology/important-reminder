@@ -9,7 +9,6 @@ class EventController extends AbstractController
 {
     public function __construct(
         private LoggerService $logger,
-
     )
     {
     }

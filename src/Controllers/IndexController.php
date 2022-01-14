@@ -8,7 +8,6 @@ use Langivi\ImportantReminder\Services\LoggerService;
 
 class IndexController extends AbstractController
 {
-    private readonly ContainerBuilder $containerBuilder;
     public function __construct(
         private LoggerService $logger,
     )
