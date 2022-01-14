@@ -1,7 +1,6 @@
 <?php 
 
-namespace Langivi\ImportantReminder\Services;
-
+namespace Langivi\ImportantReminder\Interfaces;
 
 interface LoggerHandlerInterface
 {

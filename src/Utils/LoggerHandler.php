@@ -1,7 +1,8 @@
 <?php 
 
-namespace Langivi\ImportantReminder\Services;
+namespace Langivi\ImportantReminder\Utils;
 
+use Langivi\ImportantReminder\Interfaces\LoggerHandlerInterface;
 use UnexpectedValueException;
 
 class LoggerHandler implements LoggerHandlerInterface
