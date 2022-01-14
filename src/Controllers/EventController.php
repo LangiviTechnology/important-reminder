@@ -5,20 +5,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\LoggerService;
 
-class EventController
+class EventController extends AbstractController
 {
-    private readonly ContainerBuilder $containerBuilder;
     public function __construct(
         private LoggerService $logger,
 
     )
     {
-    }
-
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
     }
 
     public function findOne(\HttpRequest $request, \HttpResponse $response)

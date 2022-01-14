@@ -6,20 +6,13 @@ use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\UserService;
 use Langivi\ImportantReminder\Services\LoggerService;
 
-class AuthController
+class AuthController extends AbstractController
 {
-    private readonly ContainerBuilder $containerBuilder;
     public function __construct(
         private UserService $userService,
         private LoggerService $logger,
     )
     {
-    }
-
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
     }
 
     public function register(\HttpRequest $request, \HttpResponse $response)

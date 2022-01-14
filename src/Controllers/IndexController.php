@@ -6,19 +6,13 @@ use Langivi\ImportantReminder\Services\LoggerService;
 
 
 
-class IndexController
+class IndexController extends AbstractController
 {
     private readonly ContainerBuilder $containerBuilder;
     public function __construct(
         private LoggerService $logger,
     )
     {
-    }
-
-    public function setContainer(ContainerBuilder $container): self
-    {
-        $this->container = $container;
-        return $this;
     }
 
     public function index(\HttpRequest $request, \HttpResponse $response)
