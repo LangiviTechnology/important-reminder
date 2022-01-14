@@ -4,8 +4,9 @@ namespace Langivi\ImportantReminder;
 
 use Langivi\ImportantReminder\Controllers\IndexController;
 use Langivi\ImportantReminder\Routing\Router;
-use Langivi\ImportantReminder\Services\LoggerHandler;
 use Symfony\Component\Config\FileLocator;
+use Langivi\ImportantReminder\Utils\LoggerHandler;
+use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
@@ -77,11 +78,10 @@ class Loader
     {
         echo 'Setup Logger' . PHP_EOL;
         $logFileName = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
-        // $logHandler = $this->containerBuilder->get( 'LoggerHandler');
-        // $logHandler->setFilename($logFileName);
-        // var_dump($this->containerBuilder);
-        $logger = $this->containerBuilder->get("LoggerService");
-        // $logger->setHandler($logHandler);
+        $logHandler = new LoggerHandler();
+        $logHandler->setFilename($logFileName);
+        $logger = $this->containerBuilder->get(LoggerService::class);
+        $logger->setHandler($logHandler);
         $logger->setMode('DEBUG');
         return $this;
     }
@@ -98,9 +98,10 @@ class Loader
         $object->containerBuilder->set(Loader::class, $object);
         $object->injectServices()
             ->injectControllers()
-            ->setRouter()
-            ->setupLogger();
+            ->setRouter();
         $object->containerBuilder->compile();
+        $object->setupLogger();
+        $object->containerBuilder->get(LoggerService::class)->info('Server started');
         // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
 //        var_dump($object->containerBuilder->getServiceIds());
