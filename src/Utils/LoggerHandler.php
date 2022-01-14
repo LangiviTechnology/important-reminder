@@ -31,6 +31,9 @@ class LoggerHandler implements LoggerHandlerInterface
 		foreach ($vars as $var => $value) {
 			$output = str_replace('%' . $var . '%', $value, $output);
 		}
-		file_put_contents($this->filename, $output . PHP_EOL, FILE_APPEND);
+		echo $output;
+		file_put_contents_async($this->filename, $output . PHP_EOL, function(){
+			echo 'file writed \n  ';
+		});
     }
 }
