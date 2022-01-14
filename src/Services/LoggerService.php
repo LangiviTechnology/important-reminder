@@ -2,6 +2,8 @@
 
 namespace Langivi\ImportantReminder\Services;
 
+use Langivi\ImportantReminder\Interfaces\LoggerHandlerInterface;
+
 class LoggerService
 {
     public const LEVELS = [
@@ -34,7 +36,7 @@ class LoggerService
                 'timestamp' => (new \DateTimeImmutable())->format('c'),
                 'level' => strtoupper($level),
                 'message' => $message,
-                'context' => self::contextToString($message, $context),
+                'context' => self::contextToString($context),
             ]);
         }
     }
@@ -48,19 +50,19 @@ class LoggerService
         return $result;
     }
 
-    public function error($message, array $context) {
+    public function error($message, array $context = array()) {
         $this->log('EROOR', $message, $context);
     }
     
-    public function warning($message, array $context) {
+    public function warning($message, array $context = array()) {
         $this->log('WARNING', $message, $context);
     }
 
-    public function info($message, array $context) {
+    public function info($message, array $context = array()) {
         $this->log('INFO', $message, $context);
     }
 
-    public function debug($message, array $context) {
+    public function debug($message, array $context = array()) {
         $this->log('DEBUG', $message, $context);
     }
 }
