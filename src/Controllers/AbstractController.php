@@ -1,10 +1,14 @@
 <?php
 namespace Langivi\ImportantReminder\Controllers;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-class AbstractController{
+
+class AbstractController
+{
+    private readonly ContainerBuilder $containerBuilder;
+
     public function setContainer(ContainerBuilder $container): self
     {
-        $this->container = $container;
+        $this->containerBuilder = $container;
         return $this;
     }
 }

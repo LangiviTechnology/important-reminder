@@ -6,9 +6,9 @@ use  Langivi\ImportantReminder\Entity\Event;
 
 class UserService
 {
-	// public function __construct(private UserRepository $userRepository)
-	// {
-	// }
+	public function __construct()
+	{
+	}
 
     public function register(User $userDto): User
     {

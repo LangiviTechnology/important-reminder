@@ -16,12 +16,6 @@ class IndexController extends AbstractController
     {
     }
 
-    // public function setContainer(ContainerBuilder $container): self
-    // {
-    //     $this->container = $container;
-    //     return $this;
-    // }
-
     public function index(\HttpRequest $request, \HttpResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
