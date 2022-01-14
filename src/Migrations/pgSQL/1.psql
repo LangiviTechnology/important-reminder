@@ -1,0 +1,9 @@
+CREATE TABLE event(
+    id SERIAL PRIMARY KEY,
+    title CHARACTER VARYING(30),
+    description CHARACTER VARYING(30),
+    type CHARACTER VARYING(100),
+    date CHARACTER VARYING(100),
+    date_remind CHARACTER VARYING(100),
+    date_created CHARACTER VARYING(100)
+)
