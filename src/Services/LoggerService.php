@@ -11,8 +11,8 @@ class LoggerService
 		'PROD' => ['ERROR', 'WARNING'],
 		'DEFAULT' => ['ERROR'],
 	];
-    private $handler;
-    private $mode = 'DEFAULT';
+    private Callable $handler;
+    private string $mode = 'DEFAULT';
 
     public function setHandler(LoggerHandlerInterface $handler) 
     {

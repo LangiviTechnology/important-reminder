@@ -7,11 +7,7 @@ use UnexpectedValueException;
 
 class LoggerHandler implements LoggerHandlerInterface
 {
-    private $filename ='';
-
-	public function __construct()
-	{
-	}
+    private string $filename ='';
 
 	public function setFilename($filename)
 	{
