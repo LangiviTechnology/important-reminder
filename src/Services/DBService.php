@@ -1,20 +1,31 @@
 <?php
 namespace Langivi\ImportantReminder\Services;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 class DBService
  {	
+	private static ContainerBuilder $container;
 	 public $dbconn;
 	public function __construct() {
-		$this->dbconn = pg_pconnect("host=postgres dbname=reminderdb user=reminderuser password=4reminder321c");
+		$contBuild = $this::$container;
+			$DB_HOST = $contBuild->getParameter('DB_HOST');
+			$DB_NAME = $contBuild->getParameter('DB_NAME');
+			$DB_USER = $contBuild->getParameter('DB_USER');
+			$DB_PASSWORD = $contBuild->getParameter('DB_PASSWORD');
+		$this->dbconn = pg_connect(" host=$DB_HOST dbname=$DB_NAME user=$DB_USER password=$DB_PASSWORD ");
 	}
 	public function connectDB(){
 		try {
-			echo "Connected to postgres at postgres successfully.";
-		
-			pg_send_query($this->dbconn, "CREATE DATABASE reminderDB");
-			pg_wait($this->dbconn,function ($arg){
-				var_dump (pg_fetch_all($arg));
-			});
+			if (!$this->dbconn){
+			 var_dump("Could not connect to the database");
+			} else {
+				$query = pg_query($this->dbconn,"SELECT 1");
+			 	if (!$query){
+				 	var_dump("Could not connect to the database");
+				} else return $this->dbconn;
+				
+			}
 
     	} catch (e) {
         	die("Could not connect to the database");
@@ -29,4 +40,9 @@ class DBService
 		$result = pg_send_execute($this->dbconn, "my_query", array($par));
 		return new Promise(fn($res, $rej) => pg_wait($this->dbconn, fn($arg) => $res(pg_fetch_all($arg))));
 	}
+	static function setContainer(ContainerBuilder $container): void
+    {
+		self::$container = $container;
+        
+    }
 }

@@ -4,6 +4,7 @@ namespace Langivi\ImportantReminder;
 
 use Langivi\ImportantReminder\Controllers\IndexController;
 use Langivi\ImportantReminder\Routing\Router;
+use Langivi\ImportantReminder\Services\DBService;
 use Langivi\ImportantReminder\Services\TestService;
 use Symfony\Component\Config\FileLocator;
 use Langivi\ImportantReminder\Services\MessageGenerator;
@@ -69,6 +70,10 @@ class Loader
         $this->containerBuilder->set('router', $router);
         return $this;
     }
+    public function injectServiceDB()
+    {
+        DBService::setContainer($this->containerBuilder);
+    }
 
     public function getContainer()
     {
@@ -82,10 +87,11 @@ class Loader
         $object->containerBuilder->set(Loader::class, $object);
         $object->injectServices()
             ->injectControllers()
-            ->setRouter();
+            ->setRouter()
+            ->injectServiceDB();
         $object->containerBuilder->compile();
         var_dump($object->containerBuilder->get(IndexController::class));
-//        var_dump($object->containerBuilder->getParameter('env'));
+       var_dump($object->containerBuilder->getParameter('DB_HOST'));
 //        var_dump($object->containerBuilder->getServiceIds());
 
         return $object;
