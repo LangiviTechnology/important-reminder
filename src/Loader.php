@@ -76,11 +76,6 @@ class Loader
        $this->containerBuilder->register('serviceDB','DBService');
        
     }
-    public static function setMigration($cont)
-    {
-        $migr = new Migration($cont);
-
-    }
     public function getContainer()
     {
         return $this->containerBuilder;
