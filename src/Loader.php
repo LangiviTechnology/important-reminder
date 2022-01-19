@@ -3,6 +3,7 @@
 namespace Langivi\ImportantReminder;
 
 use Langivi\ImportantReminder\Controllers\IndexController;
+use Langivi\ImportantReminder\Migrations\Migration;
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\DBService;
 use Langivi\ImportantReminder\Services\TestService;
@@ -10,7 +11,6 @@ use Symfony\Component\Config\FileLocator;
 use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-
 
 class Loader
 {
@@ -71,10 +71,16 @@ class Loader
         return $this;
     }
     public function injectServiceDB()
-    {
-        DBService::setContainer($this->containerBuilder);
+    {    
+       $contse = DBService::setContainer($this->containerBuilder);
+       $this->containerBuilder->register('serviceDB','DBService');
+       
     }
+    public static function setMigration($cont)
+    {
+        $migr = new Migration($cont);
 
+    }
     public function getContainer()
     {
         return $this->containerBuilder;

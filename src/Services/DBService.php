@@ -3,17 +3,19 @@ namespace Langivi\ImportantReminder\Services;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+    
 class DBService
  {	
-	private static ContainerBuilder $container;
-	 public $dbconn;
+	public static ContainerBuilder $container;
+	 public static $dbconn;
 	public function __construct() {
 		$contBuild = $this::$container;
 			$DB_HOST = $contBuild->getParameter('DB_HOST');
 			$DB_NAME = $contBuild->getParameter('DB_NAME');
 			$DB_USER = $contBuild->getParameter('DB_USER');
 			$DB_PASSWORD = $contBuild->getParameter('DB_PASSWORD');
-		$this->dbconn = pg_connect(" host=$DB_HOST dbname=$DB_NAME user=$DB_USER password=$DB_PASSWORD ");
+		self::$dbconn = pg_connect(" host=$DB_HOST dbname=$DB_NAME user=$DB_USER password=$DB_PASSWORD ");
+		
 	}
 	public function connectDB(){
 		try {
@@ -23,7 +25,7 @@ class DBService
 				$query = pg_query($this->dbconn,"SELECT 1");
 			 	if (!$query){
 				 	var_dump("Could not connect to the database");
-				} else return $this->dbconn;
+				} else return true;
 				
 			}
 
@@ -43,6 +45,6 @@ class DBService
 	static function setContainer(ContainerBuilder $container): void
     {
 		self::$container = $container;
-        
     }
+	
 }
