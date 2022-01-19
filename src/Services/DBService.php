@@ -19,10 +19,10 @@ class DBService
 	}
 	public function connectDB(){
 		try {
-			if (!$this->dbconn){
+			if (self::$dbconn){
 			 var_dump("Could not connect to the database");
 			} else {
-				$query = pg_query($this->dbconn,"SELECT 1");
+				$query = pg_query(self::$dbconn,"SELECT 1");
 			 	if (!$query){
 				 	var_dump("Could not connect to the database");
 				} else return true;
@@ -34,13 +34,13 @@ class DBService
     	}
     }
 	public function querry($q){
-		pg_send_query($this->dbconn,$q);
-		return new Promise(fn($res, $rej) => pg_wait($this->dbconn, fn($arg) => $res(pg_fetch_all($arg))));
+		pg_send_query(self::$dbconn,$q);
+		return new Promise(fn($res, $rej) => pg_wait(self::$dbconn, fn($arg) => $res(pg_fetch_all($arg))));
 	}
 	public function execute($par){
-		$result = pg_send_prepare($this->dbconn, "my_query", 'SELECT * FROM shops WHERE name = $par');
-		$result = pg_send_execute($this->dbconn, "my_query", array($par));
-		return new Promise(fn($res, $rej) => pg_wait($this->dbconn, fn($arg) => $res(pg_fetch_all($arg))));
+		$result = pg_send_prepare(self::$dbconn, "my_query", 'SELECT * FROM shops WHERE name = $par');
+		$result = pg_send_execute(self::$dbconn, "my_query", array($par));
+		return new Promise(fn($res, $rej) => pg_wait(self::$dbconn, fn($arg) => $res(pg_fetch_all($arg))));
 	}
 	static function setContainer(ContainerBuilder $container): void
     {

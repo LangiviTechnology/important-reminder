@@ -14,10 +14,6 @@ class   Migration {
         $this->fileList = $this->getMigrationFile();
     }
     public function connectedDB(){
-      
-        // $db = new DBService();
-        // $db::setContainer($this->dbconn);
-
         $dbconn = $this->dbconn;
         var_dump($dbconn);
         // $dbconn=pg_connect("host=postgres dbname=reminderdb user=reminderuser password=4reminder321c ");
@@ -37,12 +33,10 @@ class   Migration {
         var_dump($allFiles);
         $lastFileNumber = trim(preg_replace("/[^0-9]/",' ',end($allFiles)));
         
-    
         $lastmigrationPath = dirname(__FILE__).'/lastmigration.txt';
         $lastmig  = explode(',',file_get_contents($lastmigrationPath));
         $lastmigNum = end($lastmig);
        
-    
         if($lastFileNumber > $lastmigNum){
             $fileArr=array();
             foreach($allFiles as $file ){
