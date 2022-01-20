@@ -11,7 +11,7 @@ class LoggerService
 		'PROD' => ['ERROR', 'WARNING'],
 		'DEFAULT' => ['ERROR'],
 	];
-    private Callable $handler;
+    private LoggerHandlerInterface $handler;
     private string $mode = 'DEFAULT';
 
     public function setHandler(LoggerHandlerInterface $handler) 
@@ -41,13 +41,16 @@ class LoggerService
     {
         $result = '';
         foreach ($context as $key => $value) {
-            $result = $result . '[' . $key . ']=' . $value . '; ';
+            $result = $result . $key . ' = ' . $value . '; ';
+            echo $key;
+            echo $value;
+            echo $result;
         }
         return $result;
     }
 
     public function error($message, array $context = array()) {
-        $this->log('EROOR', $message, $context);
+        $this->log('ERROR', $message, $context);
     }
     
     public function warning($message, array $context = array()) {
