@@ -1,7 +1,11 @@
 <?php
 /** @var Symfony\Component\DependencyInjection\Loader\Configurator\ParametersConfigurator $parameters */
 $parameters->set('env', 'dev');
-$env =file(".env");
+if(file_exists(".env.dev")){
+    $env = file(".env.dev");
+} else {
+    $env =file(".env");
+}
 foreach($env as $param){
     if(str_starts_with($param,'#')){
         continue;
