@@ -39,13 +39,13 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
      * @var $router Router
      */
     $router = $loader->getContainer()->get('router');
-    
     $metod = HttpMethods::tryFrom($req->method);
+
     // TODO: Add Main error handler
     if (!$metod) {
         $res->setStatusCode(404);
         $res->send('Incorrect method' . $req->method);
-        $logger->error('Incorrect method' . [$req->method]);
+        $logger->error('Incorrect method ' . $req->method);
         return;
     }
     
@@ -53,7 +53,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
     if (!$route) {
         $res->setStatusCode(404);
         $res->send('Path not found ' . $req->uri);
-        $logger->warning('Path not found ' . [$req->uri, $metod]);
+        $logger->warning('Path not found: ', ['uri' => $req->uri, 'method' => $metod->value]);
         return;
     }
     // throw new Error('test error');
@@ -62,6 +62,9 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
 });
 
 $httpServer->on_error(function ($error){
-    echo 'error';
+    // global $loader;
+    // $logger = $loader->getContainer()->get(LoggerService::class);
+    // echo 'error=================';
     var_dump($error);
+    // $logger->error('', $error);
 });
