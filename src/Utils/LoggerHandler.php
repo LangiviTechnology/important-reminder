@@ -29,7 +29,7 @@ class LoggerHandler implements LoggerHandlerInterface
 		}
 		echo $output;
 		file_put_contents_async($this->filename, $output . PHP_EOL, function(){
-			echo 'file writed \n  ';
-		});
+			echo 'file writed \n  ' . PHP_EOL;
+		}, FILE_APPEND);
     }
 }
