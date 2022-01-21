@@ -25,7 +25,7 @@ class LoggerService
     }
 
 
-    public function log($level, $message, array $context = array())
+    public function log(string $level, string $message, array $context = array())
     {
         if (in_array($level, self::LEVELS[$this->mode])) {
             $this->handler->handle([
@@ -41,7 +41,7 @@ class LoggerService
     {
         $result = '';
         foreach ($context as $key => $value) {
-            $result = $result . $key . ' = ' . $value . '; ';
+            $result .= $key . ' = ' . $value . '; ';
             echo $key;
             echo $value;
             echo $result;

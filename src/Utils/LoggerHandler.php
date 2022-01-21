@@ -9,10 +9,10 @@ class LoggerHandler implements LoggerHandlerInterface
 {
     private string $filename ='';
 
-	public function setFilename($filename)
+	public function setFileName($filename)
 	{
         $dir =  dirname($filename);
-		if (!file_exists($dir)) {
+		if (!is_dir($dir)) {
 			$status = mkdir($dir, 0777, true);
 			if ($status === false && !is_dir($dir)) {
 				throw new UnexpectedValueException(sprintf('There is no existing directory at "%s"', $dir));

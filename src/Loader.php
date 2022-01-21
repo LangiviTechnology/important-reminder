@@ -79,7 +79,7 @@ class Loader
         echo 'Setup Logger' . PHP_EOL;
         $logFileName = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
         $logHandler = new LoggerHandler();
-        $logHandler->setFilename($logFileName);
+        $logHandler->setFileName($logFileName);
         $logger = $this->containerBuilder->get(LoggerService::class);
         $logger->setHandler($logHandler);
         $logger->setMode('DEBUG');

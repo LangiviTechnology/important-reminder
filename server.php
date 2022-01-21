@@ -39,21 +39,21 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
      * @var $router Router
      */
     $router = $loader->getContainer()->get('router');
-    $metod = HttpMethods::tryFrom($req->method);
+    $method = HttpMethods::tryFrom($req->method);
 
     // TODO: Add Main error handler
-    if (!$metod) {
+    if (!$method) {
         $res->setStatusCode(404);
         $res->send('Incorrect method' . $req->method);
         $logger->error('Incorrect method ' . $req->method);
         return;
     }
     
-    $route = $router->matchFromPath($req->uri, $metod);
+    $route = $router->matchFromPath($req->uri, $method);
     if (!$route) {
         $res->setStatusCode(404);
         $res->send('Path not found ' . $req->uri);
-        $logger->warning('Path not found: ', ['uri' => $req->uri, 'method' => $metod->value]);
+        $logger->warning('Path not found: ', ['uri' => $req->uri, 'method' => $method->value]);
         return;
     }
     // throw new Error('test error');
