@@ -4,6 +4,8 @@
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Router;
+use Langivi\ImportantReminder\Services\LoggerService;
+
 
 require 'vendor/autoload.php';
 const PORT = 81; 
@@ -25,6 +27,7 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 
 $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($result) {
     global $loader;
+    $logger = $loader->getContainer()->get(LoggerService::class);
 //    var_dump($req);
 //    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
     $publicUri = $this->publicPath . $req->uri;
@@ -36,21 +39,32 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
      * @var $router Router
      */
     $router = $loader->getContainer()->get('router');
-    
-    $metod = HttpMethods::tryFrom($req->method);
+    $method = HttpMethods::tryFrom($req->method);
+
     // TODO: Add Main error handler
-    if (!$metod) {
+    if (!$method) {
         $res->setStatusCode(404);
         $res->send('Incorrect method' . $req->method);
+        $logger->error('Incorrect method ' . $req->method);
         return;
     }
     
-    $route = $router->matchFromPath($req->uri, $metod);
+    $route = $router->matchFromPath($req->uri, $method);
     if (!$route) {
         $res->setStatusCode(404);
         $res->send('Path not found ' . $req->uri);
+        $logger->warning('Path not found: ', ['uri' => $req->uri, 'method' => $method->value]);
         return;
     }
+    // throw new Error('test error');
     $route->call($req, $res);
 
+});
+
+$httpServer->on_error(function ($error){
+    // global $loader;
+    // $logger = $loader->getContainer()->get(LoggerService::class);
+    // echo 'error=================';
+    var_dump($error);
+    // $logger->error('', $error);
 });
