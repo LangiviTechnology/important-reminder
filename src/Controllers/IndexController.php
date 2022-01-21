@@ -2,16 +2,14 @@
 namespace Langivi\ImportantReminder\Controllers;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use Langivi\ImportantReminder\Loader;
-use Langivi\ImportantReminder\Services\EventService;
-use Langivi\ImportantReminder\Services\TestService;
-use Langivi\ImportantReminder\Controllers\AbstractController;
+use Langivi\ImportantReminder\Services\LoggerService;
+
+
 
 class IndexController extends AbstractController
 {
-    private readonly ContainerBuilder $containerBuilder;
     public function __construct(
-        private TestService $controller, EventService $eventService
+        private LoggerService $logger,
     )
     {
     }

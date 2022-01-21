@@ -9,6 +9,8 @@ use Langivi\ImportantReminder\Services\DBConnecter;
 use Langivi\ImportantReminder\Services\DBService;
 use Langivi\ImportantReminder\Services\TestService;
 use Symfony\Component\Config\FileLocator;
+use Langivi\ImportantReminder\Utils\LoggerHandler;
+use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Services\MessageGenerator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
@@ -24,6 +26,7 @@ class Loader
 
     public function setTemplateEngine()
     {
+        echo 'Set template' . PHP_EOL;
         if (!is_dir(__DIR__ . '/templates')) {
             mkdir(__DIR__ . '/templates');
         }
@@ -58,6 +61,7 @@ class Loader
 
     public function injectServices()
     {
+        echo 'Inject Services' . PHP_EOL;
         $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
         $loader->load('configurator.php');
         return $this;
@@ -65,6 +69,7 @@ class Loader
 
     public function setRouter()
     {
+        echo 'Set router' . PHP_EOL;
         Router::setContainer($this->containerBuilder);
         $routes = require_once __DIR__ . '/Routing/routes.php';
         $router = new Router($routes);
@@ -77,6 +82,19 @@ class Loader
        $dbconnecter = new DBConnecter();
        $this->containerBuilder->set('dbconnecter', $dbconnecter);
     }
+
+    public function setupLogger()
+    {
+        echo 'Setup Logger' . PHP_EOL;
+        $logFileName = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
+        $logHandler = new LoggerHandler();
+        $logHandler->setFileName($logFileName);
+        $logger = $this->containerBuilder->get(LoggerService::class);
+        $logger->setHandler($logHandler);
+        $logger->setMode('DEBUG');
+        return $this;
+    }
+
     public function getContainer()
     {
         return $this->containerBuilder;
@@ -99,8 +117,10 @@ class Loader
             ->setRouter()
             ->injectServiceDB();
         $object->containerBuilder->compile();
-    //     var_dump($object->containerBuilder->get(IndexController::class));
-    //    var_dump($object->containerBuilder->getParameter('DB_HOST'));
+        $object->setupLogger();
+        $object->containerBuilder->get(LoggerService::class)->info('Server started');
+        // var_dump($object->containerBuilder->get(IndexController::class));
+//        var_dump($object->containerBuilder->getParameter('env'));
 //        var_dump($object->containerBuilder->getServiceIds());
 
         return $object;
