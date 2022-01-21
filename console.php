@@ -1,20 +1,16 @@
 <?php
 
 use Langivi\ImportantReminder\Loader;
-use Langivi\ImportantReminder\Services\DBService;
 
-require './src/Migrations/migration.php';
 require 'vendor/autoload.php';
-require './src/Services/DBService.php';
+require './src/Migrations/migration.php';
 
 
-$loader = Loader::boot();
-$DB = $loader->getContainer("serviceDB");
-$dbser = new DBService();
-$dbser::setContainer($DB);
-$dbconn =  DBService::$dbconn;
+
+$loader = Loader::bootCli();
+$DB = $loader->getContainer();
+$dbconn = $DB->get('dbconnecter')::$dbconn;
 var_dump($dbconn);
 $migration = new Migration($dbconn);
-$sd = $migration->connectedDB();
-$exmg = $migration->excudeMigration();
+$exmg = $migration->excludeMigration();
 

@@ -6,36 +6,24 @@ use Langivi\ImportantReminder\Services\DBService;
 
 
 class   Migration {
-    public $dbconn;
-    public $fileList;
+    public object $dbconn;
+    public ?array  $fileList;
     public function __construct($dbconn)
     {
         $this->dbconn = $dbconn;
         $this->fileList = $this->getMigrationFile();
     }
-    public function connectedDB(){
-        $dbconn = $this->dbconn;
-        var_dump($dbconn);
-        // $dbconn=pg_connect("host=postgres dbname=reminderdb user=reminderuser password=4reminder321c ");
-        if (!$dbconn)
-            throw new Exception('Could not connect to the database');
-        else {
-            $query = pg_query($dbconn,"SELECT 1");
-        if (!$query)
-            throw new Exception('Could not connect to the database');
-        else
-            return $this->dbconn = $dbconn;
-        }
-    }
     public function getMigrationFile(){
         $pgFolder = str_replace('\\', '/', realpath(dirname(__FILE__)) . '/pgSQL/');
         $allFiles = glob($pgFolder . '*.psql');
-        var_dump($allFiles);
         $lastFileNumber = trim(preg_replace("/[^0-9]/",' ',end($allFiles)));
         
         $lastmigrationPath = dirname(__FILE__).'/lastmigration.txt';
-        $lastmig  = explode(',',file_get_contents($lastmigrationPath));
-        $lastmigNum = end($lastmig);
+        $fileArr =file($lastmigrationPath);
+        if(!empty($fileArr)){
+            $lastmig  = explode(',',$fileArr[0]);
+            $lastmigNum = end($lastmig);
+        }else  {$lastmigNum = 0;}
        
         if($lastFileNumber > $lastmigNum){
             $fileArr=array();
@@ -52,20 +40,22 @@ class   Migration {
     
     }
     public function migrate($file){
-        $migration = file_get_contents($file);
-        pg_query($this->dbconn,$migration);
+        $migration = file_get_contents_async($file, function($migration){
+            pg_query($this->dbconn,trim($migration));
+        });
         $numbMigration = trim(preg_replace("/[^0-9]/",' ',$file));
         $filePath = dirname(__FILE__).'/lastmigration.txt';
-        $current = file_get_contents($filePath);
-        if(empty($current)){
-            $current .= $numbMigration;
-            file_put_contents($filePath, $current);
-        }else{
-        $current .= ",".$numbMigration;
-        file_put_contents($filePath, $current);
-        }
+        file_get_contents_async($filePath, function($current){ 
+            if(empty($current)){
+                $current .= $numbMigration;
+                file_put_contents($filePath, $current);
+            }else{
+                $current .= ",".$numbMigration;
+                file_put_contents_async($filePath, $current);
+            }
+        });
     }
-    public function excudeMigration (){
+    public function excludeMigration (){
         if($this->fileList){
             foreach($this->fileList as $file){
                 $this->migrate($file);

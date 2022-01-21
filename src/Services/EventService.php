@@ -8,7 +8,6 @@ class EventService
 {
 	public function __construct(private DBService $dBService)
 	{
-        $dBService->connectDB();
 	}
 
     public function add(Event $eventDto): Event

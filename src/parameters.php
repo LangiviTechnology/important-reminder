@@ -3,9 +3,11 @@
 $parameters->set('env', 'dev');
 if(file_exists(".env.dev")){
     $env = file(".env.dev");
-} else {
+} else if (file_exists(".env")) {
     $env =file(".env");
-}
+} else {
+    var_dump("there are no parameters to start the server ");
+} 
 foreach($env as $param){
     if(str_starts_with($param,'#')){
         continue;
