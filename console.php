@@ -9,7 +9,7 @@ require './src/Migrations/migration.php';
 
 $loader = Loader::bootCli();
 $DB = $loader->getContainer();
-$dbconn = $DB->get('dbconnecter')::$dbconn;
+$dbconn = $DB->get('dbconnecter')->getConnection() ;
 var_dump($dbconn);
 $migration = new Migration($dbconn);
 $exmg = $migration->excludeMigration();

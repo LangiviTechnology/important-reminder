@@ -6,20 +6,20 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
     
 class DBService
  {	
-	public static ContainerBuilder $container;
-	 public static $dbconn;
+	private static ContainerBuilder $container;
+	public $connecterDB;
 	public function __construct() {
-		self::$dbconn = $this::$container->get('dbconnecter')::$dbconn;
+		$this->connecterDB =self::$container->get('dbconnecter');
 	}
-	public static function querry($q){
-		
-		$quer = pg_send_query(self::$dbconn,$q);
-		return new \Promise(fn($res, $rej) => pg_wait(self::$dbconn, fn($arg) => $res(pg_fetch_all($arg))));
+	public function querry($q){
+		$connectDB = $this->connecterDB->getConnection();
+		$quer = pg_send_query($connectDB,$q);
+		return new \Promise(fn($res, $rej) => pg_wait($connectDB  , fn($arg) => $res(pg_fetch_all($arg))));
 	}
-	public static function execute($par){
-		$result = pg_send_prepare(self::$dbconn, "my_query", 'SELECT * FROM shops WHERE name = $par');
-		$result = pg_send_execute(self::$dbconn, "my_query", array($par));
-		return new \Promise(fn($res, $rej) => pg_wait(self::$dbconn, fn($arg) => $res(pg_fetch_all($arg))));
+	public function execute($par){
+		$connectDB = $this->connecterDB->getConnection();
+		$result = pg_send_execute($connectDB, "my_query", array($par));
+		return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res(pg_fetch_all($arg))));
 	}
 	static function setContainer(ContainerBuilder $container): void
     {
