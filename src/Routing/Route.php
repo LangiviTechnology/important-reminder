@@ -18,10 +18,8 @@ class Route
      */
     private string $path;
 
-    /**
-     * @var string
-     */
-    private string $controller;
+
+    private \Closure | string  $controller;
 
     /**
      * @var array<HttpMethods>
@@ -33,12 +31,12 @@ class Route
      */
     private array $vars = [];
 
-    public static function create(string $path, string $controller, string $name = '', array $methods = ['GET'], array $vars = [])
+    public static function create(string $path, callable | string $controller, string $name = '', array $methods = [HttpMethods::GET], array $vars = [])
     {
         return new self($name, $path, $controller, $methods, $vars);
     }
 
-    private function __construct(string $name, string $path, string $controller, array $methods = ['GET'], array $vars = [])
+    private function __construct(string $name, string $path, callable | string  $controller, array $methods = [HttpMethods::GET], array $vars = [])
     {
         // TODO is need check exist at least one method?
         $this->name = $name;
@@ -50,10 +48,14 @@ class Route
 
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
-        [$controllerName, $action] = explode("::", $this->controller);
+        if (is_string($this->controller)){
+            [$controllerName, $action] = explode("::", $this->controller);
+            if ($this->container) $controller = $this->container->get($controllerName);
+            $controller->{$action}($request, $response);
+        } elseif ($this->controller instanceof \Closure){
+            ($this->controller)($request, $response);
+        }
 
-        if ($this->container) $controller = $this->container->get($controllerName);
-        $controller->{$action}($request, $response);
         // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
         // $controllerClass->{$action}($request, $response);
     }

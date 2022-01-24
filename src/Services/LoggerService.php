@@ -11,12 +11,20 @@ class LoggerService
 		'PROD' => ['ERROR', 'WARNING'],
 		'DEFAULT' => ['ERROR'],
 	];
-    private LoggerHandlerInterface $handler;
+    private readonly LoggerHandlerInterface $handler;
     private string $mode = 'DEFAULT';
 
-    public function setHandler(LoggerHandlerInterface $handler) 
+    public function __construct(LoggerHandlerInterface $handler)
     {
         $this->handler = $handler;
+    }
+
+    /**
+     * @return LoggerHandlerInterface
+     */
+    public function getHandler(): LoggerHandlerInterface
+    {
+        return $this->handler;
     }
 
     public function setMode($mode) 

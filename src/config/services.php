@@ -1,18 +1,6 @@
 <?php
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
-
-return function(ContainerConfigurator $configurator) {
-    $configurator->import('Services/MessageGenerator.php');
-    // If you want to import a whole directory:
-    // $configurator->import('Services/');
-
-    $services = $configurator->services()
-        ->defaults()
-            ->autowire()
-            ->autoconfigure()
-    ;
-
-    $services->load('App\\', '../src/*')
-        ->exclude('../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}');
-};
+/** @var Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator $services */
+$services->load('Langivi\ImportantReminder\Services\\', './Services/*')->public()->autowire()->tag('service');
+$services->load('Langivi\ImportantReminder\Handlers\\', './Handlers/*')->public()->autowire()->tag('handlers');
+$services->load('Langivi\ImportantReminder\Interfaces\\', './Interfaces/*')->public()->autowire()->tag('handlers');
