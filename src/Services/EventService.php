@@ -6,7 +6,7 @@ use  Langivi\ImportantReminder\Entity\Event;
 
 class EventService
 {
-	public function __construct(private DBService $dBService)
+	public function __construct(private DbService $dBService)
 	{
 	}
 

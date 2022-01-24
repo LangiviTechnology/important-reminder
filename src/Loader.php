@@ -3,6 +3,9 @@
 namespace Langivi\ImportantReminder;
 
 
+use Langivi\ImportantReminder\Migrations\Migration;
+use Langivi\ImportantReminder\Services\DBConnector;
+use Langivi\ImportantReminder\Services\DbService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoader};
 use Langivi\ImportantReminder\Routing\Router;
@@ -52,7 +55,13 @@ class Loader
         return $this;
     }
 
-    public function injectServices()
+    public function registerMigrations()
+    {
+        $this->containerBuilder->register(Migration::class, Migration::class)
+            ->setAutowired(true)->setPublic(true);
+    }
+
+    public function injectServices(): self
     {
         echo 'Inject Services' . PHP_EOL;
         $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
@@ -69,11 +78,18 @@ class Loader
         $this->containerBuilder->set('router', $router);
         return $this;
     }
-    public function injectServiceDB()
-    {   DBConnecter::setContainer($this->containerBuilder);
-        DBService::setContainer($this->containerBuilder);
-        $dbConnecter = new DBConnecter();
-        $this->containerBuilder->set('dbconnecter', $dbConnecter);
+
+    public function injectServiceDB(): self
+    {
+        $dbHost = $this->containerBuilder->getParameter('DB_HOST');
+        $dbName = $this->containerBuilder->getParameter('DB_NAME');
+        $dbUser = $this->containerBuilder->getParameter('DB_USER');
+        $dbPassword = $this->containerBuilder->getParameter('DB_PASSWORD');
+        $this->containerBuilder->set('db_connecter', new DBConnector(
+            $dbHost, $dbName, $dbUser, $dbPassword
+        ));
+        DbService::setContainer($this->containerBuilder);
+        return $this;
     }
 
     public function setupLogger()
@@ -93,14 +109,18 @@ class Loader
     {
         return $this->containerBuilder;
     }
-    public static function bootCli(){
+
+    public static function bootCli()
+    {
         $object = new self();
         $object->containerBuilder->set(Loader::class, $object);
         $object->injectServices()
-                ->injectServiceDB();
+            ->injectServiceDB()
+            ->registerMigrations();
         $object->containerBuilder->compile();
         return $object;
     }
+
     public static function boot()
     {
         $object = new self();

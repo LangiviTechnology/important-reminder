@@ -9,7 +9,7 @@ services:
      volumes:
        - ./:/app
      ports:
-       - 81:81
+       - 82:81
      depends_on:
       - postgres
    postgres:
@@ -22,4 +22,4 @@ services:
       volumes:
         - ../data:/var/postgresql/data
       ports:
-        - "5432:5432"
+        - "5433:5432"

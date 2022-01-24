@@ -1,6 +1,7 @@
 <?php
 
 use Langivi\ImportantReminder\Loader;
+use Langivi\ImportantReminder\Migrations\Migration;
 
 require 'vendor/autoload.php';
 require './src/Migrations/migration.php';
@@ -9,8 +10,9 @@ require './src/Migrations/migration.php';
 
 $loader = Loader::bootCli();
 $container = $loader->getContainer();
-$dbconn = $container->get('dbconnecter')->getConnection() ;
-var_dump($dbconn);
-$migration = new Migration($dbconn);
-$exmg = $migration->excludeMigration();
+/**
+ * @var $migration Migration
+ */
+$migration = $container->get(Migration::class);
+//$migration->excludeMigration();
 
