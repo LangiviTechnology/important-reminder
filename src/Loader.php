@@ -4,7 +4,7 @@ namespace Langivi\ImportantReminder;
 
 
 use Langivi\ImportantReminder\Migrations\Migration;
-use Langivi\ImportantReminder\Services\DBConnector;
+use Langivi\ImportantReminder\Connectors\DBConnector;
 use Langivi\ImportantReminder\Services\DbService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoader};

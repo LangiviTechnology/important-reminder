@@ -1,6 +1,6 @@
 <?php
 
-namespace Langivi\ImportantReminder\Services;
+namespace Langivi\ImportantReminder\Connectors;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

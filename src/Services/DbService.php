@@ -15,17 +15,18 @@ class DbService
         $this->connecterDB = self::$container->get('db_connecter');
     }
 
-    public function query($q): \Promise
+    public function query($query): \Promise
     {
         $connectDB = $this->connecterDB->getConnection();
-        $query = pg_send_query($connectDB, $q);
+        pg_send_query($connectDB, $query);
         return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res(pg_fetch_all($arg))));
     }
 
-    public function execute($par): \Promise
+    public function execute($query, $params=[]): \Promise
     {
         $connectDB = $this->connecterDB->getConnection();
-        $result = pg_send_execute($connectDB, "my_query", array($par));
+        pg_send_prepare($connectDB, "my_query", $query);
+        pg_send_execute($connectDB, "my_query", $params);
         return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res(pg_fetch_all($arg))));
     }
 
