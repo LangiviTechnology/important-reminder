@@ -2,14 +2,11 @@
 
 namespace Langivi\ImportantReminder;
 
-use Langivi\ImportantReminder\Controllers\IndexController;
-use Langivi\ImportantReminder\Routing\Router;
+
 use Symfony\Component\Config\FileLocator;
-use Langivi\ImportantReminder\Utils\LoggerHandler;
+use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoader};
+use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
-use Langivi\ImportantReminder\Services\MessageGenerator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 
 class Loader
@@ -60,7 +57,7 @@ class Loader
     {
         echo 'Inject Services' . PHP_EOL;
         $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
-        $loader->load('configurator.php');
+        $loader->load('config/configurator.php');
         return $this;
     }
 
@@ -78,10 +75,11 @@ class Loader
     {
         echo 'Setup Logger' . PHP_EOL;
         $logFileName = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
-        $logHandler = new LoggerHandler();
-        $logHandler->setFileName($logFileName);
+        /**
+         * @var $logger LoggerService
+         */
         $logger = $this->containerBuilder->get(LoggerService::class);
-        $logger->setHandler($logHandler);
+        $logger->getHandler()->setFileName($logFileName);
         $logger->setMode('DEBUG');
         return $this;
     }

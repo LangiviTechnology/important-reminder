@@ -4,8 +4,10 @@ use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Route;
 
 return [
-
     Route::create('/', 'IndexController::index', 'index', [HttpMethods::GET, HttpMethods::POST],),
+    Route::create('/test', function (HttpRequest $request, HttpResponse $response) {
+        $response->send("test");
+    }, 'index', [HttpMethods::GET],),
     Route::create('/auth/login', 'AuthController::login', 'login', [HttpMethods::POST]),
     Route::create('/auth/logout', 'AuthController::logout', 'logout', [HttpMethods::POST]),
     Route::create('/auth/register', 'AuthController::register', 'register', [HttpMethods::POST],),
