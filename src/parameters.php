@@ -9,11 +9,11 @@ if(file_exists(".env.dev")){
     var_dump("there are no parameters to start the server ");
 } 
 foreach($env as $param){
-    if(str_starts_with($param,'#')){
+    if(str_starts_with($param, '#')){
         continue;
     }
-    [$key,$value]=explode("=",$param);
-    $value = trim(str_replace("\"","",$value));
+    [$key, $value] = explode("=", $param);
+    $value = trim(str_replace("\"", "", $value));
     var_dump($key,$value);
     $parameters->set($key,$value);
    

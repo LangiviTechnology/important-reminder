@@ -8,8 +8,8 @@ require './src/Migrations/migration.php';
 
 
 $loader = Loader::bootCli();
-$DB = $loader->getContainer();
-$dbconn = $DB->get('dbconnecter')->getConnection() ;
+$container = $loader->getContainer();
+$dbconn = $container->get('dbconnecter')->getConnection() ;
 var_dump($dbconn);
 $migration = new Migration($dbconn);
 $exmg = $migration->excludeMigration();

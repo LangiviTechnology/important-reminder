@@ -77,10 +77,10 @@ class Loader
         return $this;
     }
     public function injectServiceDB()
-    {  $conecter = DBConnecter::setContainer($this->containerBuilder);
-       $contse = DBService::setContainer($this->containerBuilder);
-       $dbconnecter = new DBConnecter();
-       $this->containerBuilder->set('dbconnecter', $dbconnecter);
+    {   DBConnecter::setContainer($this->containerBuilder);
+        DBService::setContainer($this->containerBuilder);
+        $dbConnecter = new DBConnecter();
+        $this->containerBuilder->set('dbconnecter', $dbConnecter);
     }
 
     public function setupLogger()
