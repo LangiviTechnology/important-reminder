@@ -22,11 +22,10 @@ class DbService
         return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res(pg_fetch_all($arg))));
     }
 
-    public function execute($query, $params=[]): \Promise
-    {
+    public function execute(string $statement, array $params=[]): \Promise
+    {   
         $connectDB = $this->connecterDB->getConnection();
-        pg_send_prepare($connectDB, "my_query", $query);
-        pg_send_execute($connectDB, "my_query", $params);
+        pg_send_execute($connectDB, $statement, $params);
         return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res(pg_fetch_all($arg))));
     }
 

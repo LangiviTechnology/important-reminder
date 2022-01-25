@@ -46,7 +46,7 @@ class Migration
     public function migrate($file)
     {
         file_get_contents_async($file, function ($migration) {
-            $this->dbService->execute(trim($migration))->then(function () {
+            $this->dbService->query(trim($migration))->then(function () {
                 $numbMigration = trim(preg_replace("/[^0-9]/", ' ', $file));
                 $filePath = dirname(__FILE__) . '/lastmigration.txt';
                 file_get_contents_async($filePath, function ($current) use ($numbMigration, $filePath) {

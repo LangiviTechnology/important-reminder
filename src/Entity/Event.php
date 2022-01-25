@@ -3,9 +3,10 @@
 namespace App\Entity;
 
 use DateTime;
+use Langivi\ImportantReminder\Connectors\DBConnector;
 
 class Event
-{
+{	
 	private int $id;
 
 	private string $title;
@@ -20,6 +21,12 @@ class Event
 
 	private DateTime $date_created;
 
+	public function __construct(DBConnector $connecter)
+	{	$connectDB = $connecter->getConnection();
+        pg_send_prepare($connectDB, "addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ');
+        pg_send_prepare($connectDB, "removeEvent", 'DELETE FROM event WHERE id = $1' );
+        pg_send_prepare($connectDB, "updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ');
+	}
 
 	public function getId(): ?int
 	{
