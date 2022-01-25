@@ -8,9 +8,9 @@ return [
     Route::create('/test', function (HttpRequest $request, HttpResponse $response) {
         $response->send("test");
     }, 'index', [HttpMethods::GET],),
-    Route::create('/auth/login', 'AuthController::login', 'login', [HttpMethods::POST]),
-    Route::create('/auth/logout', 'AuthController::logout', 'logout', [HttpMethods::POST]),
-    Route::create('/auth/register', 'AuthController::register', 'register', [HttpMethods::POST],),
+    Route::create('/auth/login', 'AuthController::login', 'login', [HttpMethods::GET, HttpMethods::POST]),
+    Route::create('/auth/logout', 'AuthController::logout', 'logout', [HttpMethods::GET]),
+    Route::create('/auth/registration', 'AuthController::registration', 'registration', [HttpMethods::GET, HttpMethods::POST],),
     Route::create('/events/all', 'EventController::all', 'all', [HttpMethods::GET]),
     Route::create('/events/add', 'EventController::add', 'add', [HttpMethods::POST]),
     Route::create('/events/update', 'EventController::update', 'update', [HttpMethods::PUT]),
