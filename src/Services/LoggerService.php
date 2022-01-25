@@ -50,9 +50,6 @@ class LoggerService
         $result = '';
         foreach ($context as $key => $value) {
             $result .= $key . ' = ' . $value . '; ';
-            echo $key;
-            echo $value;
-            echo $result;
         }
         return $result;
     }
