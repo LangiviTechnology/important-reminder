@@ -8,6 +8,7 @@ if (file_exists(".env.dev")) {
     $env = file(".env");
 } else {
     var_dump("there are no parameters to start the server");
+    die;
 } 
 foreach ($env as $param){
     if(str_starts_with(trim($param), '#')){
