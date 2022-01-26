@@ -1,0 +1,20 @@
+{% extends 'base.twig' %}
+
+                           
+{% use 'header.twig'%}
+
+    {% block scripts %}
+        <script type="module" >
+            import {checkLogin} from '/js/authorization.js';
+            checkLogin();
+        </script>
+        
+    {% endblock %}
+
+
+    {% block body %}
+    <div class="main-dashboard">
+        main page
+    </div>
+    {% endblock %}
+
