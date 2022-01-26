@@ -7,10 +7,11 @@ return [
     Route::create('/', 'IndexController::index', 'index', [HttpMethods::GET, HttpMethods::POST],),
     Route::create('/test', function (HttpRequest $request, HttpResponse $response) {
         $response->send("test");
-    }, 'index', [HttpMethods::GET],),
+    }, 'test', [HttpMethods::GET],),
     Route::create('/auth/login', 'AuthController::login', 'login', [HttpMethods::GET, HttpMethods::POST]),
     Route::create('/auth/logout', 'AuthController::logout', 'logout', [HttpMethods::GET]),
     Route::create('/auth/registration', 'AuthController::registration', 'registration', [HttpMethods::GET, HttpMethods::POST],),
+    Route::create('/auth/refresh', 'AuthController::refresh', 'refresh', [HttpMethods::GET]),
     Route::create('/events/all', 'EventController::all', 'all', [HttpMethods::GET]),
     Route::create('/events/add', 'EventController::add', 'add', [HttpMethods::POST]),
     Route::create('/events/update', 'EventController::update', 'update', [HttpMethods::PUT]),
