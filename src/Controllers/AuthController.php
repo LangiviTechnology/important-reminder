@@ -1,5 +1,7 @@
 <?php
 namespace Langivi\ImportantReminder\Controllers;
+
+use Langivi\ImportantReminder\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Loader;
@@ -15,11 +17,6 @@ class AuthController extends AbstractController
     {
     }
 
-    public function index(\HttpRequest $request, \HttpResponse $response)
-    {
-        
-    }
-
     public function registration(\HttpRequest $request, \HttpResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
@@ -28,8 +25,47 @@ class AuthController extends AbstractController
             $response->send($twig->render('registration.twig', ['title' => 'Registration']));
             return;
         }
-        $this->logger->info('Register user');
 
+        $candidate = new User(
+            $request->body['login'],
+            $request->body['email'],
+            $request->body['password']
+        );
+        echo '---------------------------------';
+        // var_dump($candidate->getData());
+        var_dump($candidate->validate());
+
+        $response->setHeader("Content-Type", "application/json");
+
+        if (!$candidate->validate()) {
+            $response->setStatusCode(400);
+            $response->send(json_encode(
+                (object)['error' => "Incorrect data"]
+            ));
+            return;    
+        }
+
+        if (!$this->userService->isAllowed($candidate->getEmail())) {
+            $response->setStatusCode(403);
+            $response->send(json_encode(
+                (object)['error' => "Access not allowed"]
+            ));
+            return;
+        }
+
+        if ($this->userService->findOne($candidate->getEmail())) {
+            $response->setStatusCode(409);
+            $response->send(json_encode(
+                (object)['error' => "User already exist"]
+            ));
+            return;
+        }
+        $userData = $this->userService->register($candidate);
+        var_dump('userdata', $userData);
+        $this->logger->info('Register user', ['email' => $candidate->getEmail()]);
+        // set cokie
+
+        $response->send(json_encode($userData));
     }
 
 	public function login(\HttpRequest $request, \HttpResponse $response)
@@ -80,14 +116,23 @@ class AuthController extends AbstractController
             return;
         }
 
-        $tokens = $this->userService->login($user->getId());
-        $response->send(json_encode(
-            (object)['user' => $user->getData(), 'tokens' => $tokens]
-        ));
+        $userData  = $this->userService->login($user);
+        setcookie(
+            'refreshToken', 
+            $userData->tokens->refreshToken, 
+            time()+3600);
+        $response->send(json_encode($userData));
     }
 
 	public function logout(\HttpRequest $request, \HttpResponse $response)
     {
+        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+        $response->send("logout");
+    }
+
+    public function refresh(\HttpRequest $request, \HttpResponse $response)
+    {
+        var_dump($_COOKIE);
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("logout");
     }
