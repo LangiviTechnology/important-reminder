@@ -8,7 +8,8 @@ class Migration
 {
     public ?array $fileList;
 
-    public function __construct(public readonly DbService $dbService)
+    public function __construct(public readonly DbService $dbService,
+    )
     {
         $this->fileList = $this->getMigrationFile();
     }
@@ -45,19 +46,22 @@ class Migration
 
     public function migrate($file)
     {
-        file_get_contents_async($file, function ($migration) {
-            $this->dbService->query(trim($migration))->then(function () {
+        file_get_contents_async($file, function ($migration) use ($file) {
+            $this->dbService->query(trim($migration))->then(function () use ($file) {
                 $numbMigration = trim(preg_replace("/[^0-9]/", ' ', $file));
                 $filePath = dirname(__FILE__) . '/lastmigration.txt';
-                file_get_contents_async($filePath, function ($current) use ($numbMigration, $filePath) {
-                    if (empty($current)) {
-                        $current .= $numbMigration;
-                        file_put_contents($filePath, $current);
-                    } else {
-                        $current .= "," . $numbMigration;
-                        file_put_contents_async($filePath, $current);
-                    }
-                });
+                var_dump($file, $filePath);
+                if (file_exists($filePath)) {
+                    file_get_contents_async($filePath, function ($current) use ($numbMigration, $filePath) {
+                        var_dump($current);
+                        $migrations = explode(',', $current);
+                        $migrations[] = $numbMigration;
+                        var_dump($migrations);
+                        file_put_contents_async($filePath, implode(',', $migrations), fn() => var_dump("File written"));
+                    });
+                } else {
+                    file_put_contents_async($filePath, implode(',', [$numbMigration]), fn() => var_dump("File written"));
+                }
             });
         });
     }
