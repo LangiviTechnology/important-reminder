@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoader};
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Entity\AbstractEntity;
 
 class Loader
 {
@@ -29,7 +30,7 @@ class Loader
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/templates');
 
         $twig = new \Twig\Environment($loader, [
-            'cache' => __DIR__ . '/cache/twig_cache',
+            // 'cache' => __DIR__ . '/cache/twig_cache',
         ]);
         $this->containerBuilder->set('twig', $twig);
     }
@@ -68,6 +69,11 @@ class Loader
         $loader->load('config/configurator.php');
         return $this;
     }
+    public function injectEntity ()
+    {   
+        AbstractEntity::setContainer($this->containerBuilder);
+        
+    }
 
     public function setRouter()
     {
@@ -89,6 +95,7 @@ class Loader
             $dbHost, $dbName, $dbUser, $dbPassword
         ));
         DbService::setContainer($this->containerBuilder);
+        $this->containerBuilder->set('db_service',new DbService());
         return $this;
     }
 
@@ -129,7 +136,8 @@ class Loader
         $object->injectServices()
             ->injectControllers()
             ->setRouter()
-            ->injectServiceDB();
+            ->injectServiceDB()
+            ->injectEntity();
         $object->containerBuilder->compile();
         $object->setupLogger();
         $object->containerBuilder->get(LoggerService::class)->info('Server started');

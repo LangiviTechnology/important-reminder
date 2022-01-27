@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Entity;
-
+namespace  Langivi\ImportantReminder\Entity;
+use Langivi\ImportantReminder\utils\ExtendedPromise;
 use DateTime;
 use Langivi\ImportantReminder\Connectors\DBConnector;
+use Langivi\ImportantReminder\Services\DbService;
 
-class Event
+class Event extends AbstractEntity 
 {	
 	private int $id;
 
@@ -21,13 +22,30 @@ class Event
 
 	private DateTime $date_created;
 
-	public function __construct(DBConnector $connecter)
-	{	$connectDB = $connecter->getConnection();
-        pg_send_prepare($connectDB, "addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ');
-        pg_send_prepare($connectDB, "removeEvent", 'DELETE FROM event WHERE id = $1' );
-        pg_send_prepare($connectDB, "updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ');
+	public function __construct()
+	{	
+		
+		
 	}
+	public static function create(){
+		// $connectDB = self::$containerBuilder->get('db_connecter')->getConnection();
+		// $object = new self();
+		// $object->dbService = self::$containerBuilder->get(DbService::class);
+		// return ExtendedPromise::all([
+		// new \Promise(fn($res, $rej) => 
+		// $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')),
+		// new \Promise(fn($res, $rej) => 
+		// $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')),
+		// new \Promise(fn($res, $rej) => 
+		// $object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 '))
+		// ])->then(function($data) use(&$object){ return $object;});
 
+		return ExtendedPromise::all([
+			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(1),1000)) ,
+			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(2),2000)) , 
+			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(3),3000)) ,
+		])->then(fn($data)=>var_dump('data in Event',$data));
+	}
 	public function getId(): ?int
 	{
 		return $this->id;
@@ -99,13 +117,27 @@ class Event
 		return $this;
 	}
 	
-	// public function getJson()
-	// {
-	// 	// dump($this, json_encode($this));
-	// 	$arr = [];
-	// 	foreach ($this as $key => $value) {
-	// 		$arr [$key] = $value;
-	// 	}
-	// 	return $arr;
-	// }
+	public function getAll()
+	{
+		// dump($this, json_encode($this));
+		$arr = [];
+		foreach ($this as $key => $value) {
+			if ($key == "dbService") {continue;}
+			$arr [$key] = $value;
+		}
+		return $arr;
+	}
+	public function save ()
+	{
+		$this->getAll();
+		$this->dbService->execute("addEvent",$this->getAll());
+	}
+	public function delete ()
+	{
+		$this -> dbService->execute("removeEvent",array("$this->id") );
+	}
+	public function update ()
+	{
+		$this->dbService->execute("updateEvent",$this->getAll());
+	}
 }
