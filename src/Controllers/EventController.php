@@ -1,8 +1,8 @@
 <?php
 namespace Langivi\ImportantReminder\Controllers;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+// use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use Langivi\ImportantReminder\Loader;
+// use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\LoggerService;
 
 class EventController extends AbstractController
@@ -21,8 +21,10 @@ class EventController extends AbstractController
 
     public function all(\HttpRequest $request, \HttpResponse $response)
     {
-        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("EventController: all\n");
+        $twig = $this->containerBuilder->get('twig');
+        $response->setHeader("Content-Type", "text/html; charset=utf-8");
+        $response->send($twig->render('events-all.twig', ['title' => 'Login']));
+        return;
     }
 
 	public function add(\HttpRequest $request, \HttpResponse $response)
