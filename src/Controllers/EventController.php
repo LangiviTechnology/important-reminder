@@ -24,7 +24,7 @@ class EventController extends AbstractController
     {  
         //  $eve = Event::create()->then(fn($data)=>var_dump("data in eventController",$data)); працює
 
-        $eve = Event::create();
+        $eve = Event::create()->then('var_dump');
         var_dump($eve);
         // var_dump("event in controller",$eve);
         // ->then(function(Event $event) use(&$response){

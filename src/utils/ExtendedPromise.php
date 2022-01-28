@@ -20,10 +20,14 @@ class ExtendedPromise extends \Promise
                     $promiseArray[$key] = $result;
                     $lengthPromises -= 1;
                     if ($lengthPromises == 0){
+                        echo "hello\n";
+                        var_dump($promiseArray);
                         $res($promiseArray);
+                        echo "hello1\n";
                     }
-                   
+
                 });
+//                var_dump($promise);
             }
             
         });

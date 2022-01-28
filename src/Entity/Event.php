@@ -1,6 +1,7 @@
 <?php
 
-namespace  Langivi\ImportantReminder\Entity;
+namespace Langivi\ImportantReminder\Entity;
+
 use Langivi\ImportantReminder\utils\ExtendedPromise;
 use DateTime;
 use Langivi\ImportantReminder\Connectors\DBConnector;
