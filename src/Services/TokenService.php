@@ -5,16 +5,30 @@ namespace Langivi\ImportantReminder\Services;
 
 class TokenService
 {
+	private string $accessSecret; 
+	private string $refreshSecret;
 
 	public function __construct(
 	) {
+	}
+
+	public function setAccessToken(string $accessSecret): self
+	{	
+		$this->accessSecret = $accessSecret;
+		return $this;
+	}
+
+	public function setRefreshToken(string $refreshSecret): self
+	{	
+		$this->refreshSecret = $refreshSecret;
+		return $this;
 	}
 
     public function base64url_encode($data) {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
-	public function jwtGenerate(object $payload, string $key, int $expiration = 900): string 
+	public function jwtGenerate(object $payload, string $secret, int $expiration = 900): string 
 	{
 		//build the headers
 		$headers = ['alg'=>'HS256', 'typ'=>'JWT'];
@@ -25,7 +39,7 @@ class TokenService
 		$payload_encoded = $this->base64url_encode(json_encode($payload));
 		
 		//build the signature
-		$signature = hash_hmac('SHA256',"$headers_encoded.$payload_encoded",$key,true);
+		$signature = hash_hmac('SHA256',"$headers_encoded.$payload_encoded",$secret,true);
 		$signature_encoded = $this->base64url_encode($signature);
 
 		//build and return the token
@@ -33,7 +47,7 @@ class TokenService
 		return $token;		
 	}
 
-	public function jwtVerify(string $jwt, string $secret): bool
+	public function jwtVerify(string $jwt, string $secret): object|null
 	{
 		// split the jwt
 		$tokenParts = explode('.', $jwt);
@@ -55,54 +69,56 @@ class TokenService
 		$is_signature_valid = ($base64_url_signature === $signature_provided);
 		
 		if ($is_token_expired || !$is_signature_valid) {
-			return false;
+			return null;
 		} else {
-			return true;
+			return json_decode($payload);
 		}
 	}
 
 
-    public function generateTokens($payload): object
+    public function generateTokens(object $payload): object
     {
 		// realize it
 		// $accessSecret = $this->containerBuilder->getParameter('JWT_ACCESS_SECRET');
 		// $refreshSecret = $this->containerBuilder->getParameter('JWT_REFRESH_SECRET');
 		// var_dump('------------', $accessSecret, $refreshSecret,'-=--===========');
 		
-		$accessSecret = 'Sb2xlIjoiQWRtaW4iL';
-		$refreshSecret = 'CJVc2VybmFtZSI6Ikph';
+		// $accessSecret = 'Sb2xlIjoiQWRtaW4iL';
+		// $refreshSecret = 'CJVc2VybmFtZSI6Ikph';
 		
-		$accessToken = $this->jwtGenerate($payload, $accessSecret, 60 * 30 ); // 30 min
-		$refreshToken =$this->jwtGenerate($payload, $refreshSecret, 60 * 24 * 30 ); // 30 days
+		$accessToken = $this->jwtGenerate($payload, $this->accessSecret, 60 * 30 ); // 30 min
+		$refreshToken =$this->jwtGenerate($payload, $this->refreshSecret, 60 * 60 * 24 * 30 ); // 30 days
 		
 		return (object) [
 			'accessToken' => $accessToken,
 			'refreshToken' => $refreshToken,
 		];
     }
-	
 
-	public function validationAccessToken(string $token) :bool
+	public function validationAccessToken(string $token): object|null
     {
-		return true;
+		return $this->jwtVerify($token, $this->accessSecret);
     }
 
-	public function validationRefreshToken(string $token) :bool
+	public function validationRefreshToken(string $token): object|null
     {
-		return true;
+		return $this->jwtVerify($token, $this->refreshSecret);
     }
 
-	public function findToken(string $refreshToken): string | bool
+	public function findOne(string $refreshToken): string | bool
     {
-		return false;
+		//TODO add search in db
+		return $refreshToken;
     }
-	public function removeToken(string $email): string
+	public function removeToken(string $refreshToken): string
     {
-        return '';
+		//TODO add  db
+        return $refreshToken;
     }
 	public function saveToken(string $userId,string $refreshToken): string
     {
-        return '';
+		//TODO add  db
+        return $refreshToken;
     }
 
 }
