@@ -106,6 +106,7 @@ class UserService
         }
         return false;
     }
+    
 	public function comparePassword(string $password, string $userPassword): bool
     {
         return password_verify($password, $userPassword);
