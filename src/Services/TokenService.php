@@ -86,8 +86,8 @@ class TokenService
 		// $accessSecret = 'Sb2xlIjoiQWRtaW4iL';
 		// $refreshSecret = 'CJVc2VybmFtZSI6Ikph';
 		
-		$accessToken = $this->jwtGenerate($payload, $this->accessSecret, 60 * 30 ); // 30 min
-		$refreshToken =$this->jwtGenerate($payload, $this->refreshSecret, 60 * 60 * 24 * 30 ); // 30 days
+		$accessToken = $this->jwtGenerate($payload, $this->accessSecret, 60 * 15 ); // 30 min
+		$refreshToken =$this->jwtGenerate($payload, $this->refreshSecret, 60 * 60 * 24 * 15 ); // 30 days
 		
 		return (object) [
 			'accessToken' => $accessToken,
