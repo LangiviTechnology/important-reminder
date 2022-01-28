@@ -182,3 +182,7 @@ section h3{
 	color:#45ab9f;
 	border-bottom: 1px solid #f0f0f0;
 }
+
+.authorization-form h2 {
+	margin-top: 0px;
+}

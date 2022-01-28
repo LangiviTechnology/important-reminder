@@ -14,7 +14,7 @@
 
 {% block body %}
     <section>
-        <form onsubmit="return registration(event)">
+        <form class="authorization-form">
             <h2>{{ title }}</h2>
             <input id="login" required name="login" placeholder="Login"  type="text">
             <input id="email" required name="email" placeholder="Email"  type="email" onchange="checkCorrectEmail(this.value)">
