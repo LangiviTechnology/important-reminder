@@ -23,7 +23,7 @@ class EventController extends AbstractController
     public function all(\HttpRequest $request, \HttpResponse $response)
     {   
 
-        $eve = Event::create();
+        $eve = Event::create()->then('var_dump');
         var_dump($eve);
         // ->then(function(Event $event) use(&$response){
         //     $event->setTitle('1sds Title');

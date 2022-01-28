@@ -29,14 +29,20 @@ class ExtendedPromise extends \Promise
                 $res($promiseArray);
             }
             foreach($promises as $key => $promise){
-                $promise->then(function($result) use(&$lengthPromises,&$promiseArray,&$res,&$key){
+                $promise->then(function($result) use(&$lengthPromises,&$promiseArray, $res, $key){
+                    var_dump('promise inside', $result, $key);
+                    file_put_contents($result,'');
                     $promiseArray[$key] = $result;
                     $lengthPromises -= 1;
                     if ($lengthPromises == 0){
+                        echo "hello\n";
+                        var_dump($promiseArray);
                         $res($promiseArray);
+                        echo "hello1\n";
                     }
-                   
+
                 });
+//                var_dump($promise);
             }
             
         });

@@ -1,143 +1,157 @@
 <?php
 
-namespace  Langivi\ImportantReminder\Entity;
+namespace Langivi\ImportantReminder\Entity;
+
 use Langivi\ImportantReminder\utils\ExtendedPromise;
 use DateTime;
 use Langivi\ImportantReminder\Connectors\DBConnector;
 use Langivi\ImportantReminder\Services\DbService;
 
-class Event extends AbstractEntity 
-{	
-	private int $id;
+class Event extends AbstractEntity
+{
+    private int $id;
 
-	private string $title;
+    private string $title;
 
-	private string $description;
+    private string $description;
 
-	private string $type;
+    private string $type;
 
-	private DateTime $date;
+    private DateTime $date;
 
-	private DateTime $date_remind;
+    private DateTime $date_remind;
 
-	private DateTime $date_created;
+    private DateTime $date_created;
 
-	public function __construct()
-	{	
-		
-		
-	}
-	public static function create(){
-		// $connectDB = self::$containerBuilder->get('db_connecter')->getConnection();
-		// $object = new self();
-		// $object->dbService = self::$containerBuilder->get(DbService::class);
-		// return ExtendedPromise::all([
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')),
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')),
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 '))
-		// ])->then(function($data) use(&$object){ return $object;});
+    public function __construct()
+    {
 
-		return ExtendedPromise::all([
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(1),1000)) ,
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(2),2000)) , 
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(3),3000)) ,
-		])->then(fn($data)=>var_dump('data in Event',$data));
-	}
-	public function getId(): ?int
-	{
-		return $this->id;
-	}
 
-	public function getTitle(): ?string
-	{
-		return $this->title;
-	}
+    }
 
-	public function setTitle(string $title): self
-	{
-		$this->title = $title;
-		return $this;
-	}
+    public static function create()
+    {
+        // $connectDB = self::$containerBuilder->get('db_connecter')->getConnection();
+        // $object = new self();
+        // $object->dbService = self::$containerBuilder->get(DbService::class);
+        // return ExtendedPromise::all([
+        // new \Promise(fn($res, $rej) =>
+        // $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')),
+        // new \Promise(fn($res, $rej) =>
+        // $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')),
+        // new \Promise(fn($res, $rej) =>
+        // $object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 '))
+        // ])->then(function($data) use(&$object){ return $object;});
+        $promises = [
+            new \Promise(fn($res, $rej) => set_timeout(fn() => $res(1), 100)),
+            new \Promise(fn($res, $rej) => set_timeout(fn() => $res(2), 200)),
+//            new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(3),3000)) ,
+        ];
+//        var_dump($promises);
+        return ExtendedPromise::all($promises)->then(function (array $params) use (&$object) {
+            echo 'resolved\n\n\n';
+            var_dump($params);
+            return \Promise::resolve($object);
+        });
+    }
 
-	public function getDescription(): ?string
-	{
-		return $this->description;
-	}
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-	public function setDescription(string $description): self
-	{
-		$this->description = $description;
-		return $this;
-	}
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
 
-	public function getType(): ?string
-	{
-		return $this->type;
-	}
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+        return $this;
+    }
 
-	public function setType(string $type): self
-	{
-		$this->type = $type;
-		return $this;
-	}
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-	public function getDateCreated()
-	{
-		return $this->date_created;
-	}
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+        return $this;
+    }
 
-	public function setDateCreated(\DateTime | string $date_created): self
-	{
-		$this->date_created = is_string($date_created) ? new DateTime($date_created) : $date_created;
-		return $this;
-	}
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
 
-	public function getDate(): ?\DateTimeInterface
-	{
-		return $this->date;
-	}
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
 
-	public function setDate(\DateTime | string | null $date): self
-	{
-		$this->date = is_string($date) ? new DateTime($date) : $date;
-		return $this;
-	}
+    public function getDateCreated()
+    {
+        return $this->date_created;
+    }
 
-	public function getDateRemind(): ?\DateTimeInterface
-	{
-		return $this->date_remind;
-	}
+    public function setDateCreated(\DateTime|string $date_created): self
+    {
+        $this->date_created = is_string($date_created) ? new DateTime($date_created) : $date_created;
+        return $this;
+    }
 
-	public function setDateRemind(\DateTime | string | null $date_remind): self
-	{
-		$this->date_remind = is_string($date_remind) ? new DateTime($date_remind) : $date_remind;
-		return $this;
-	}
-	
-	public function getAll()
-	{
-		// dump($this, json_encode($this));
-		$arr = [];
-		foreach ($this as $key => $value) {
-			if ($key == "dbService") {continue;}
-			$arr [$key] = $value;
-		}
-		return $arr;
-	}
-	public function save ()
-	{
-		$this->getAll();
-		$this->dbService->execute("addEvent",$this->getAll());
-	}
-	public function delete ()
-	{
-		$this -> dbService->execute("removeEvent",array("$this->id") );
-	}
-	public function update ()
-	{
-		$this->dbService->execute("updateEvent",$this->getAll());
-	}
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTime|string|null $date): self
+    {
+        $this->date = is_string($date) ? new DateTime($date) : $date;
+        return $this;
+    }
+
+    public function getDateRemind(): ?\DateTimeInterface
+    {
+        return $this->date_remind;
+    }
+
+    public function setDateRemind(\DateTime|string|null $date_remind): self
+    {
+        $this->date_remind = is_string($date_remind) ? new DateTime($date_remind) : $date_remind;
+        return $this;
+    }
+
+    public function getAll()
+    {
+        // dump($this, json_encode($this));
+        $arr = [];
+        foreach ($this as $key => $value) {
+            if ($key == "dbService") {
+                continue;
+            }
+            $arr [$key] = $value;
+        }
+        return $arr;
+    }
+
+    public function save()
+    {
+        $this->getAll();
+        $this->dbService->execute("addEvent", $this->getAll());
+    }
+
+    public function delete()
+    {
+        $this->dbService->execute("removeEvent", array("$this->id"));
+    }
+
+    public function update()
+    {
+        $this->dbService->execute("updateEvent", $this->getAll());
+    }
 }
