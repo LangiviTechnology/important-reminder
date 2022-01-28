@@ -10,6 +10,7 @@ function parseJwt (token) {
 
 export function logout () {
 	// request('/auth/logout');
+	fetch('/auth/logout');
 	localStorage.removeItem('token');
 	setLoginStatus('');
 }
@@ -59,11 +60,11 @@ export async function login(e) {
 	}
 	if (!response.ok) {
 		notification.textContent = data?.error;
-		return false;
+		return;
 	}      
 	localStorage.setItem('token', data.tokens.accessToken);
 	console.log(data);
-	document.referrer ? window.location = document.referrer : history.back()
+	window.location = '/';
 }
 
 export async function registration(e) {
@@ -83,6 +84,9 @@ export async function registration(e) {
 	const data = await response.json();
 	if (!response.ok) {
 		notification.textContent = data?.error;
+		return;
 	}      
+	localStorage.setItem('token', data.tokens.accessToken);
 	console.log(data);
+	window.location = '/';
 }
