@@ -24,7 +24,9 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
     $mimeType = getFileMimeType($path);
     $res->setHeader("Content-Type", $mimeType);
     var_dump($mimeType);
-    $file = file_get_contents_async($path, fn($arg)=>var_dump($arg)&$res->setHeader("Content-Length", strlen($arg))
+    // $file = file_get_contents_async($path, fn($arg)=>var_dump($arg)&$res->setHeader("Content-Length", strlen($arg))
+        // ->send($arg)); // FIX PROBLEM WITH ASYNC READ
+    file_get_contents_async($path, fn($arg)=>$res->setHeader("Content-Length", strlen($arg))
         ->send($arg)); // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path\n";
 }
@@ -32,8 +34,7 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($result) {
     global $loader;
     $logger = $loader->getContainer()->get(LoggerService::class);
-//    var_dump($req);
-//    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
+    //    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
     $publicUri = $this->publicPath . $req->uri;
     if (file_exists($publicUri) && !is_dir($publicUri)) {
         servePublic($publicUri, $res, $result);
@@ -42,6 +43,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
     /**
      * @var $router Router
      */
+    // var_dump($req);
     $router = $loader->getContainer()->get('router');
     $method = HttpMethods::tryFrom($req->method);
 
