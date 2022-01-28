@@ -17,6 +17,19 @@ class AuthController extends AbstractController
     {
     }
 
+    public function getCookie(string $requestCookies, string $name): string|bool
+    {
+        //TODO might need better parser cookie
+        parse_str(strtr($requestCookies, array('&' => '%26', '+' => '%2B', ';' => '&')), $cookies);
+        
+        var_dump($cookies);
+        
+        if (!array_key_exists($name, $cookies)){
+            return false; 
+        }
+        return $cookies[$name];
+    }
+
     public function registration(\HttpRequest $request, \HttpResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
@@ -90,7 +103,6 @@ class AuthController extends AbstractController
             ));
             return;
         }
-
         if (!$this->userService->isAllowed($email)) {
             $response->setStatusCode(403);
             $response->send(json_encode(
@@ -116,24 +128,46 @@ class AuthController extends AbstractController
             return;
         }
 
-        $userData  = $this->userService->login($user);
-        setcookie(
-            'refreshToken', 
-            $userData->tokens->refreshToken, 
-            time()+3600);
+        $userData = $this->userService->login($user);
+        $maxAge = 3600 * 24 * 15;
+        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Max-Age=' . $maxAge . '; Secure; HttpOnly');
+        
         $response->send(json_encode($userData));
     }
 
 	public function logout(\HttpRequest $request, \HttpResponse $response)
     {
-        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("logout");
+        $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
+        $this->userService->logout($refreshToken);
+        // TODO rework delete cookie
+        $response->setHeader("Set-Cookie",'refreshToken=0; Max-Age=0;');
+        $response->setHeader("Content-Type", "application/json; charset=utf-8");
+        $response->send(json_encode(['logout'=> true]));
     }
 
     public function refresh(\HttpRequest $request, \HttpResponse $response)
     {
-        var_dump($_COOKIE);
-        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("logout");
+        $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
+        $response->setHeader("Content-Type", "application/json");
+        if (!$refreshToken){
+            $response->setStatusCode(403);
+            $response->send(json_encode(
+                (object)['error' => "Access denied"]
+            ));
+            return; 
+        }
+        $userData = $this->userService->refresh($refreshToken, '');
+        if (!$userData){
+            $response->setStatusCode(403);
+            $response->send(json_encode(
+                (object)['error' => "Access denied"]
+            ));
+            return; 
+        }
+
+        $maxAge = 3600 * 24 * 15;
+        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Max-Age=' . $maxAge . '; HttpOnly');
+
+        $response->send(json_encode($userData));
     }
 }
