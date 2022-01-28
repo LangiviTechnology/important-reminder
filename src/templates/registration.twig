@@ -1,35 +1,12 @@
 {% extends 'base.twig' %}
 {% block scripts %}
-<script>
-    let checkedEmail;
-	function checkCorrectEmail(email) {
-		const exp = new RegExp(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/g);
-        checkedEmail = !!email.match(exp);
-        const label = document.querySelector('.email-label');
-        label.textContent = checkedEmail ? '' : 'Write correct email please';
-	}
-    async function registration(e) {
-        e.preventDefault();
-        const fields = Array.from(e.target.getElementsByTagName('input'));
-        const form = fields.reduce((result, field) => {
-            result[field.name] = field.value;
-            return result;
-        }, {});  
+<script type="module" >
+    import {registration} from '/js/authorization.js';
+    import {checkCorrectEmail} from '/js/utils.js';
 
-        const response = await fetch('/auth/registration', {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form) 
-        });
-        const notification = document.querySelector('.notification');
-        const data = await response.json();
-        if (!response.ok) {
-            notification.textContent = data?.error;
-            return false;
-        }      
-        console.log(data);
-        return false;
-    }
+    const inpuntEmail = document.querySelector('input[name="email"]');
+    inpuntEmail.onchange = checkCorrectEmail;
+    document.forms[0].onsubmit = registration;
 </script>
 {% endblock %}
 
@@ -39,10 +16,10 @@
     <section>
         <form onsubmit="return registration(event)">
             <h2>{{ title }}</h2>
-            <input id="login" required name="login" placeholder="Login"  type="text"><br/><br/>
+            <input id="login" required name="login" placeholder="Login"  type="text">
             <input id="email" required name="email" placeholder="Email"  type="email" onchange="checkCorrectEmail(this.value)">
-            <label for="email" class="email-label" style="color:red"></label><br/><br/>
-            <input required name="password" placeholder="Password"  type="password"><br/><br/>
+            <label for="email" class="email-label" style="color:red"></label>
+            <input required name="password" placeholder="Password"  type="password"><br/>
             <button type="submit">Registration</button>
         </form>
         <div class="notification"></div>
