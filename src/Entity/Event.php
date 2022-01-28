@@ -33,10 +33,15 @@ class Event extends AbstractEntity
 		$object = new self();
 		$object->dbService = self::$containerBuilder->get(DbService::class);
 		return ExtendedPromise::all([
-		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')->then(fn($data)=>$res($data));} ,1000)),
-		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(fn($data)=>$res($data));} ,2000)),
-		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(fn($data)=>$res($data));} ,3000)),
-		])->then(fn($data)=> \Promise::resolve($object));
+		new \Promise(fn($res, $rej) => $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')->then(fn($data)=>$res($data))),
+		new \Promise(fn($res, $rej) => $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(fn($data)=>$res($data))),
+		// new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(fn($data)=>$res($data));} ,3000)),
+		])->then(function($data) use($object) {return \Promise::resolve($object);});
+		// return ExtendedPromise::all([
+		// 	new \Promise(fn($res, $rej) => $res(1)),
+		// 	new \Promise(fn($res, $rej) => $res(2)),
+		// 	new \Promise(fn($res, $rej) => $res(3)),
+		// 	])->then(function($data) use($object) {return \Promise::resolve($data);});
 	}
 	public function getId(): ?int
 	{
