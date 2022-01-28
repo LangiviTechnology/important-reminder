@@ -3,11 +3,13 @@
 
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Routing\HttpMethods;
-use Langivi\ImportantReminder\Routing\Router;
+// use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
-
+use function Langivi\ImportantReminder\Utils\getFileMimeType;
 
 require 'vendor/autoload.php';
+require_once 'src/Utils/MimeType.php';
+
 const PORT = 81; 
 echo "Server is starting ..." . PHP_EOL;
 $loader = Loader::boot();
@@ -18,8 +20,10 @@ echo "Started on PORT " . PORT . PHP_EOL;
 
 function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
-    $mimeType = $fileinfo->file($path, FILEINFO_MIME_TYPE);
+    // $mimeType = $fileinfo->file($path, FILEINFO_MIME_TYPE);
+    $mimeType = getFileMimeType($path);
     $res->setHeader("Content-Type", $mimeType);
+    var_dump($mimeType);
     $file = file_get_contents_async($path, fn($arg)=>var_dump($arg)&$res->setHeader("Content-Length", strlen($arg))
         ->send($arg)); // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path\n";
