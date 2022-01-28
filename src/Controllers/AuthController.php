@@ -17,19 +17,6 @@ class AuthController extends AbstractController
     {
     }
 
-    public function getCookie(string $requestCookies, string $name): string|bool
-    {
-        //TODO might need better parser cookie
-        parse_str(strtr($requestCookies, array('&' => '%26', '+' => '%2B', ';' => '&')), $cookies);
-        
-        var_dump($cookies);
-        
-        if (!array_key_exists($name, $cookies)){
-            return false; 
-        }
-        return $cookies[$name];
-    }
-
     public function registration(\HttpRequest $request, \HttpResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
@@ -76,8 +63,11 @@ class AuthController extends AbstractController
         $userData = $this->userService->register($candidate);
         var_dump('userdata', $userData);
         $this->logger->info('Register user', ['email' => $candidate->getEmail()]);
-        // set cokie
-
+        // TODO resolve problem Max age
+        $maxAge = 3600 * 24 * 15;
+        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; HttpOnly');
+        $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=900;');
+        var_dump($response);
         $response->send(json_encode($userData));
     }
 
@@ -129,45 +119,63 @@ class AuthController extends AbstractController
         }
 
         $userData = $this->userService->login($user);
-        $maxAge = 3600 * 24 * 15;
-        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Max-Age=' . $maxAge . '; Secure; HttpOnly');
+        $this->logger->info('Login user', ['email' => $userData->user->email]);
         
+        $maxAge = 3600 * 24 * 15;
+        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; Secure; HttpOnly');
+        $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=20;');
+
         $response->send(json_encode($userData));
     }
 
 	public function logout(\HttpRequest $request, \HttpResponse $response)
     {
         $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
-        $this->userService->logout($refreshToken);
-        // TODO rework delete cookie
-        $response->setHeader("Set-Cookie",'refreshToken=0; Max-Age=0;');
+        
         $response->setHeader("Content-Type", "application/json; charset=utf-8");
+        if (!$refreshToken){
+            $response->setStatusCode(401);
+            $response->send(json_encode(
+                (object)['error' => "Unauthorized"]
+            ));
+            return; 
+        }
+
+        // TODO split types user DTO (id, login) and native user
+        // TODO add return userDto 
+        $this->userService->logout($refreshToken);
+        // $this->logger->info('Logout user', ['email' => $userData->user->getEmail()]);
+
+        // TODO rework delete cookie
+        $response->setHeader("Set-Cookie",'refreshToken=0; Path=/; Max-Age=0;');
+        $response->setHeader("Set-Cookie",'accessToken=0; Path=/; Max-Age=0;');
+
         $response->send(json_encode(['logout'=> true]));
     }
 
     public function refresh(\HttpRequest $request, \HttpResponse $response)
-    {
+    { 
         $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
         $response->setHeader("Content-Type", "application/json");
         if (!$refreshToken){
-            $response->setStatusCode(403);
+            $response->setStatusCode(401);
             $response->send(json_encode(
-                (object)['error' => "Access denied"]
+                (object)['error' => "Unauthorized"]
             ));
             return; 
         }
         $userData = $this->userService->refresh($refreshToken, '');
         if (!$userData){
-            $response->setStatusCode(403);
+            $response->setStatusCode(401);
             $response->send(json_encode(
-                (object)['error' => "Access denied"]
+                (object)['error' => "Unauthorized"]
             ));
             return; 
         }
 
         $maxAge = 3600 * 24 * 15;
-        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Max-Age=' . $maxAge . '; HttpOnly');
-
+        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; HttpOnly');
+        $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=900;');
         $response->send(json_encode($userData));
     }
 }
