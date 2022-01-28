@@ -21,10 +21,12 @@ class EventController extends AbstractController
     }
 
     public function all(\HttpRequest $request, \HttpResponse $response)
-    {   
+    {  
+        //  $eve = Event::create()->then(fn($data)=>var_dump("data in eventController",$data)); працює
 
         $eve = Event::create();
         var_dump($eve);
+        // var_dump("event in controller",$eve);
         // ->then(function(Event $event) use(&$response){
         //     $event->setTitle('1sds Title');
         //     $event->setDate('1223');
@@ -47,7 +49,9 @@ class EventController extends AbstractController
         // $this->logger->info('Add event');
         // $eve = new Event();
         // $sd = $eve->save();
-
+         Event::create()->then(function($data){var_dump($data);});
+        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+        $response->send("EventController: add\n");
 
     }
 

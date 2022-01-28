@@ -28,23 +28,14 @@ class Event extends AbstractEntity
 		
 	}
 	public static function create(){
-		// $connectDB = self::$containerBuilder->get('db_connecter')->getConnection();
-		// $object = new self();
-		// $object->dbService = self::$containerBuilder->get(DbService::class);
-		// return ExtendedPromise::all([
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')),
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')),
-		// new \Promise(fn($res, $rej) => 
-		// $object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 '))
-		// ])->then(function($data) use(&$object){ return $object;});
-
+		$connectDB = self::$containerBuilder->get('db_connecter')->getConnection();
+		$object = new self();
+		$object->dbService = self::$containerBuilder->get(DbService::class);
 		return ExtendedPromise::all([
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(1),1000)) ,
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(2),2000)) , 
-			new \Promise(fn($res,$rej)=> set_timeout(fn()=>$res(3),3000)) ,
-		])->then(fn($data)=>var_dump('data in Event',$data));
+		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')->then(fn($data)=>$res($data));} ,1000)),
+		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(fn($data)=>$res($data));} ,2000)),
+		new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(fn($data)=>$res($data));} ,3000)),
+		])->then(fn($data)=> \Promise::resolve($object));
 	}
 	public function getId(): ?int
 	{
