@@ -3,6 +3,8 @@
 namespace Langivi\ImportantReminder\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use ArrayObject;
+
 
 class Route
 {
@@ -31,6 +33,12 @@ class Route
      */
     private array $vars = [];
 
+    /**
+	 * @var ArrayObject
+	 */
+	private ArrayObject $middleWares = [];
+
+
     public static function create(string $path, callable | string $controller, string $name = '', array $methods = [HttpMethods::GET], array $vars = [])
     {
         return new self($name, $path, $controller, $methods, $vars);
@@ -47,6 +55,21 @@ class Route
     }
 
     public function call(\HttpRequest $request, \HttpResponse $response)
+    {
+        $middleRequest = $request;
+        $middleResponse = $response;
+        if (count($this->middleWares)) {
+            foreach ($this->middleWares as $middleWare) {
+                [$middleRequest, $middleResponse] = $middleWare($request, $response);
+            }
+        }
+        $this->call($request, $response);
+
+        // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
+        // $controllerClass->{$action}($request, $response);
+    }
+
+    public function execute(\HttpRequest $request, \HttpResponse $response)
     {
         if (is_string($this->controller)){
             [$controllerName, $action] = explode("::", $this->controller);
