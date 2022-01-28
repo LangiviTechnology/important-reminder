@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>{{ title }}</title>
-    {# <link rel='stylesheet' href='/stylesheets/style.css' /> #}
+    <link rel='stylesheet' href='/styles/style.css' />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     {% block javascript %}{% endblock %}
 
@@ -17,5 +17,9 @@
   </main>
 
     {% block scripts %}{% endblock %}
+    <script type="module" >
+      import {checkLogged} from '/js/authorization.js';
+      checkLogged();
+    </script>
   </body> 
 </html>
