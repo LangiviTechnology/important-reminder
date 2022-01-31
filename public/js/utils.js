@@ -6,18 +6,16 @@ export function checkCorrectEmail(event) {
 	label.textContent = checkedEmail ? '' : 'Write correct email please';
 };
 
-export async function authFetch (resource, originalInit = {}) {
-	const authInit = {...originalInit};
-	if (!authInit.headers) init.headers = {};
-	authInit.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
-	const response = await fetch(resource, authInit);
+export async function authFetch(resource, originalInit = {}) {
+	const response = await fetch(resource, originalInit);
 	if (response.status === 401 && !originalInit._isRetry) {
+		const authInit = {...originalInit};
 		authInit._isRetry = true;
 		const refresh = await fetch('/auth/refresh');
 		if (refresh.status === 401) {
 			return response;
 		}
-		const data = await response.json();
+		const data = await refresh.json();
 		localStorage.setItem('token', data.tokens.accessToken);
 		
 		return await authFetch(resource, authInit);
