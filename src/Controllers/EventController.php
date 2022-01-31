@@ -24,22 +24,21 @@ class EventController extends AbstractController
     {  
         //  $eve = Event::create()->then(fn($data)=>var_dump("data in eventController",$data)); працює
 
-        $eve = Event::create()->then('var_dump');
-        var_dump($eve);
-        // var_dump("event in controller",$eve);
-        // ->then(function(Event $event) use(&$response){
-        //     $event->setTitle('1sds Title');
-        //     $event->setDate('1223');
-        //     $event->setDateCreated('123213');
-        //     $event->setDescription('description');
-        //     $event->setType('nowType');
-        //     $event->setDateCreated('232532');
-        //     $sd = $event->save();
-        //     $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        //     $response->send("EventController: all\n");
-        // });
-        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("EventController: all\n");
+        Event::create()
+            ->then(function(Event $event) use(&$response){
+             $event->setTitle('1sds Title');
+             $event->setDate('1223');
+             $event->setDateCreated('123213');
+             $event->setDescription('description');
+             $event->setType('nowType');
+             $event->setDateCreated('232532');
+             $event->save();
+             $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+             $response->send("EventController: all\n");
+             return false;
+         });
+//        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+//        $response->send("EventController: all\n");
     }
 
 	public function add(\HttpRequest $request, \HttpResponse $response)
