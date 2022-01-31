@@ -12,5 +12,5 @@ $container = $loader->getContainer();
  * @var $migration Migration
  */
 $migration = $container->get(Migration::class);
-$migration->excludeMigration();
+$migration->recursionMigration();
 
