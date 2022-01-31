@@ -3,6 +3,7 @@
 namespace Langivi\ImportantReminder\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Langivi\ImportantReminder\MiddleWares\AuthMiddleware;
 
 class Route
 {

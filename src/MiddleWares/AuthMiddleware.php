@@ -31,6 +31,7 @@ class AuthMiddleware
         $accessToken = $this->getCookie($cookie, 'accessToken');
         if (!$accessToken || !$this->tokenService->validationAccessToken($accessToken)) 
         {
+            // TODO separate api and html reaquests
             $response->setHeader("Content-Type", "application/json; charset=utf-8");
             $response->setStatusCode(401);
             $response->send(json_encode(
