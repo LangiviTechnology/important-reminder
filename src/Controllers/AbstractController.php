@@ -12,7 +12,7 @@ class AbstractController
         return $this;
     }
 
-    public function getCookie(string|null $rawCookie = '', string $name): string|bool
+    public function getCookie(string $rawCookie, string $name): string|bool
     {
         //TODO might need better parser cookie
         parse_str(strtr($rawCookie, array('&' => '%26', '+' => '%2B', ';' => '&')), $cookies);

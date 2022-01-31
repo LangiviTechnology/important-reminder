@@ -130,7 +130,8 @@ class AuthController extends AbstractController
 
 	public function logout(\HttpRequest $request, \HttpResponse $response)
     {
-        $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
+        $cookie = $request->headers['Cookie'] ?? '';
+        $refreshToken = $this->getCookie($cookie, 'refreshToken');
         
         $response->setHeader("Content-Type", "application/json; charset=utf-8");
         if (!$refreshToken){
@@ -155,7 +156,8 @@ class AuthController extends AbstractController
 
     public function refresh(\HttpRequest $request, \HttpResponse $response)
     { 
-        $refreshToken = $this->getCookie($request->headers['Cookie'], 'refreshToken');
+        $cookie = $request->headers['Cookie'] ?? '';
+        $refreshToken = $this->getCookie($cookie, 'refreshToken');
         $response->setHeader("Content-Type", "application/json");
         if (!$refreshToken){
             $response->setStatusCode(401);
