@@ -66,10 +66,10 @@ class Route
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
         if ($this->isRequireAuth) {
-            $auth = $this->containerBuilder->get(AuthMiddleware::class);
+            $auth = $this->container->get(AuthMiddleware::class);
             if ($auth->middleware($request, $response)) return;
         }
-        $this->call($request, $response);
+        $this->execute($request, $response);
     }
 
     public function execute(\HttpRequest $request, \HttpResponse $response)
