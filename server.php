@@ -26,8 +26,10 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
     var_dump($mimeType);
     // $file = file_get_contents_async($path, fn($arg)=>var_dump($arg)&$res->setHeader("Content-Length", strlen($arg))
         // ->send($arg)); // FIX PROBLEM WITH ASYNC READ
-    file_get_contents_async($path, fn($arg)=>$res->setHeader("Content-Length", strlen($arg))
-        ->send($arg)); // FIX PROBLEM WITH ASYNC READ
+    file_get_contents_async($path, 
+        fn(string $arg):HttpResponse|null=>
+            $res->setHeader("Content-Length", strlen($arg))->send($arg)); 
+        // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path\n";
 }
 

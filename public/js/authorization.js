@@ -8,11 +8,15 @@ function parseJwt (token) {
     return JSON.parse(jsonPayload);
 };
 
-export function logout () {
+export async function logout () {
 	// request('/auth/logout');
-	fetch('/auth/logout');
-	localStorage.removeItem('token');
-	setLoginStatus('');
+	const response = await fetch('/auth/logout');
+	if (response.ok) {
+		localStorage.removeItem('token');
+		setLoginStatus('');
+		return;
+	}
+	// TODO Redirect to error page 
 }
 
 function setLoginStatus (login) {
