@@ -8,6 +8,8 @@ use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\UserService;
 use Langivi\ImportantReminder\Services\LoggerService;
 
+use function Langivi\ImportantReminder\Utils\getCookie;
+
 class AuthController extends AbstractController
 {
     public function __construct(
@@ -131,7 +133,7 @@ class AuthController extends AbstractController
 	public function logout(\HttpRequest $request, \HttpResponse $response)
     {
         $cookie = $request->headers['Cookie'] ?? '';
-        $refreshToken = $this->getCookie($cookie, 'refreshToken');
+        $refreshToken = getCookie($cookie, 'refreshToken');
         
         $response->setHeader("Content-Type", "application/json; charset=utf-8");
         if (!$refreshToken){
@@ -157,7 +159,7 @@ class AuthController extends AbstractController
     public function refresh(\HttpRequest $request, \HttpResponse $response)
     { 
         $cookie = $request->headers['Cookie'] ?? '';
-        $refreshToken = $this->getCookie($cookie, 'refreshToken');
+        $refreshToken = getCookie($cookie, 'refreshToken');
         $response->setHeader("Content-Type", "application/json");
         if (!$refreshToken){
             $response->setStatusCode(401);
