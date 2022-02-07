@@ -78,14 +78,6 @@ class TokenService
 
     public function generateTokens(object $payload): object
     {
-		// realize it
-		// $accessSecret = $this->containerBuilder->getParameter('JWT_ACCESS_SECRET');
-		// $refreshSecret = $this->containerBuilder->getParameter('JWT_REFRESH_SECRET');
-		// var_dump('------------', $accessSecret, $refreshSecret,'-=--===========');
-		
-		// $accessSecret = 'Sb2xlIjoiQWRtaW4iL';
-		// $refreshSecret = 'CJVc2VybmFtZSI6Ikph';
-		
 		$accessToken = $this->jwtGenerate($payload, $this->accessSecret, 60 * 15 ); // 30 min
 		$refreshToken =$this->jwtGenerate($payload, $this->refreshSecret, 60 * 60 * 24 * 15 ); // 30 days
 		

@@ -71,7 +71,7 @@ class User
 
 	public function validate (): bool
 	{
-		$isEmail = (bool) preg_match( EMAIL_PATTERN, $this->email);
+		$isEmail = (bool) preg_match(EMAIL_PATTERN, $this->email);
 		$isPassword = (bool) preg_match(PASSWORD_PATTERN, $this->password);
 		$isLogin = (bool) preg_match(LOGIN_PATTERN, $this->login);
 		// var_dump('MAIL',$isEmail);

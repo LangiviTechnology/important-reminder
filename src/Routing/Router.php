@@ -38,8 +38,6 @@ class Router
 			return $route;
 		}
 		return null;
-		// TODO: Add Main error handler
-		// throw new \Exception('No route found for method ' . $method->value, 404);
 	}
 
     public static function setContainer(ContainerBuilder $container): void
