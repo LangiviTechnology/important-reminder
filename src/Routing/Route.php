@@ -4,6 +4,8 @@ namespace Langivi\ImportantReminder\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Langivi\ImportantReminder\MiddleWares\AuthMiddleware;
+use Langivi\ImportantReminder\Handlers\ExceptionHandler;
+use Exception;
 
 class Route
 {
@@ -66,11 +68,18 @@ class Route
 
     public function call(\HttpRequest $request, \HttpResponse $response)
     {
-        if ($this->isRequireAuth) {
-            $auth = $this->container->get(AuthMiddleware::class);
-            if ($auth->middleware($request, $response)) return;
+        try {
+            if ($this->isRequireAuth) {
+                $auth = $this->container->get(AuthMiddleware::class);
+                if (!$auth->middleware($request, $response)) {
+                    throw new Exception('Unauthorized', 401);
+                }
+            }
+            $this->execute($request, $response);
+        } catch (\Throwable $th) {
+            $exceptionHandler = $this->container->get(ExceptionHandler::class);
+            $exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
         }
-        $this->execute($request, $response);
     }
 
     public function execute(\HttpRequest $request, \HttpResponse $response)
@@ -82,9 +91,6 @@ class Route
         } elseif ($this->controller instanceof \Closure){
             ($this->controller)($request, $response);
         }
-
-        // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
-        // $controllerClass->{$action}($request, $response);
     }
 
     public function match(string $uri, HttpMethods $method): bool
