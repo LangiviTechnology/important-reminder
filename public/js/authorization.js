@@ -58,10 +58,13 @@ export async function login(e) {
 	});
 	const notification = document.querySelector('.notification');
 	const data = await response.json();
+	const suggestElement = document.querySelector('.suggest-registration');
 	if (response.status === 404 ) {
-		const suggestElement = document.querySelector('.suggest-registration');
 		suggestElement.classList.add('show');
+	} else {
+		suggestElement.classList.remove('show');
 	}
+
 	if (!response.ok) {
 		notification.textContent = data?.error;
 		return;
