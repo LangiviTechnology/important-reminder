@@ -24,21 +24,28 @@ class EventController extends AbstractController
     {  
         //  $eve = Event::create()->then(fn($data)=>var_dump("data in eventController",$data)); працює
 
-        Event::create()
-            ->then(function(Event $event) use(&$response){
-             $event->setTitle('1sds Title');
-             $event->setDate('1223');
-             $event->setDateCreated('123213');
+        Event::create()->then(function(Event $event) use(&$response){
+             $event->setTitle(' sasdddddd ');
              $event->setDescription('description');
              $event->setType('nowType');
-             $event->setDateCreated('232532');
              $event->save();
-             $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-             $response->send("EventController: all\n");
-             return false;
-         });
+            $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+            $response->send("EventController: all\n");
+            });
 //        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
 //        $response->send("EventController: all\n");
+
+            // $dbSe = $this->containerBuilder->get('db_service');
+            // $dbSe->prepare("addEvent", 'INSERT INTO event VALUES (DEFAULT,$1,$2,$3) ')->then(function($data)use(&$response,&$dbSe){
+            //    var_dump("DAAAAAAAAATAAAA",$data);
+            //    $getEX=$dbSe->execute("addEvent", array('SUPER TEPER TUT','sdasdads','asdasd'));
+            //    var_dump($getEX);
+            //    $response->setHeader("Content-Type", "text/plain; charset=utf-8");
+            //    $response->send("EventController: all\n");
+
+            // });
+       
+       
     }
 
 	public function add(\HttpRequest $request, \HttpResponse $response)
@@ -48,7 +55,7 @@ class EventController extends AbstractController
         // $this->logger->info('Add event');
         // $eve = new Event();
         // $sd = $eve->save();
-         Event::create()->then(function($data){var_dump($data);});
+        //  Event::create()->then(function($data){var_dump($data);});
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: add\n");
 

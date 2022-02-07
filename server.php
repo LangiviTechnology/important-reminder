@@ -20,7 +20,7 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
     $mimeType = $fileinfo->file($path, FILEINFO_MIME_TYPE);
     $res->setHeader("Content-Type", $mimeType);
-    $file = file_get_contents_async($path, fn($arg)=>var_dump($arg)&$res->setHeader("Content-Length", strlen($arg))
+    $file = file_get_contents_async($path, fn($arg)=>$res->setHeader("Content-Length", strlen($arg))
         ->send($arg)); // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path\n";
 }
@@ -65,6 +65,6 @@ $httpServer->on_error(function ($error){
     // global $loader;
     // $logger = $loader->getContainer()->get(LoggerService::class);
     // echo 'error=================';
-    var_dump($error);
+    // var_dump($error);
     // $logger->error('', $error);
 });

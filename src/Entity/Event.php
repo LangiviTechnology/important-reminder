@@ -31,17 +31,32 @@ class Event extends AbstractEntity
 
     public static function create()
     {
-        $object = new self();
-        $object->dbService = self::$containerBuilder->get(DbService::class);
-        $connection = $object->dbService->connecterDB->getConnection();
-        //temp solution!
-        pg_send_prepare($connection, "addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ');
-        var_dump(pg_get_result($connection));
-        pg_send_prepare($connection, "removeEvent", 'DELETE FROM event WHERE id = $1');
-        var_dump(pg_get_result($connection));
-        pg_send_prepare($connection, "updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ');
-        var_dump(pg_fetch_all(pg_get_result($connection)));
-        var_dump(pg_get_result($connection));
+        // $object = new self();
+        // $db=$object->dbService = self::$containerBuilder->get(DbService::class);
+        // return $db->prepare("addEvent", 'INSERT INTO event VALUES (DEFAULT,$1,$2,$3)')->then(function($data) use(&$object){
+        //     return \Promise::resolve($object);
+        // });
+        //-----------------------------------------------------------------------------------
+        // $object = new self();
+        // $db=$object->dbService = self::$containerBuilder->get(DbService::class);
+        // return ExtendedPromise::allRecurs([
+        //     $object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) '),
+        //    $object->dbService->prepare("removeEvent", 'DELETE FROM event WHERE id = $1'),
+        // //   $object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 '),
+        // ])->then(function($data) use(&$object){
+        //     var_dump("PROOOOOMISE ALLLLLL",$data);
+        // });
+        //-----------------------------------------------------------------------------------
+        // $object->dbService = self::$containerBuilder->get(DbService::class);
+        // $connection = $object->dbService->connecterDB->getConnection();
+        // //temp solution!
+        // pg_send_prepare($connection, "addEvent", 'INSERT INTO event VALUES (DEFAULT,$0,$1,$2); ');
+        // // var_dump(pg_get_result($connection));
+        // // pg_send_prepare($connection, "removeEvent", 'DELETE FROM event WHERE id = $1');
+        // // var_dump(pg_get_result($connection));
+        // // pg_send_prepare($connection, "updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ');
+        // var_dump(pg_fetch_all(pg_get_result($connection)));
+        // var_dump(pg_get_result($connection));
         /*
         return ExtendedPromise::all([
             $object->dbService->delay(fn()=>$object->dbService->prepare("addEvent", 'INSERT INTO event VALUES ($1,$2,$3,$4,$5) ')),
@@ -49,8 +64,32 @@ class Event extends AbstractEntity
             // new \Promise(fn($res, $rej) => set_timeout( function() use(&$object,&$res){$object->dbService->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(fn($data)=>$res($data));} ,3000)),
         ])->then(function ($data) use ($object) {
             var_dump($data);*/
-            return \Promise::resolve($object);
+            // return \Promise::resolve($object);
 //        });
+        //-------------------------------------------------------------------------------------------
+        $object = new self();
+        $db=$object->dbService = self::$containerBuilder->get(DbService::class);
+        return new \Promise(function($res,$rej)use(&$object,&$db){
+            $db->prepare("addEvent", 'INSERT INTO event VALUES (DEFAULT,$1,$2,$3)')->then(function($data)use(&$object,&$db,$res){
+                $db->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(function($data)use(&$object,&$db,$res){
+                    $db->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(function($data)use(&$object,$res){
+                        $res($object);
+                    });
+                });
+            });
+
+        });
+        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
+        // $object = new self();
+        // $db=$object->dbService = self::$containerBuilder->get(DbService::class);
+        // return ExtendedPromise::allRecurs([
+        //     $db->prepare("addEvent", 'INSERT INTO event VALUES (DEFAULT,$1,$2,$3)'),
+        //     $db->prepare("removeEvent", 'DELETE FROM event WHERE id = $1'),
+        //     $db->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')
+
+        // ],$object);
+        //-----------------------------------------------------------------------------------------
     }
 
     public function getId(): ?int
@@ -139,7 +178,8 @@ class Event extends AbstractEntity
 
     public function save()
     {
-       $this->dbService->execute("addEvent", $this->getAll());
+        // var_dump("GET ALL",$this->getAll());
+       return $this->dbService->execute("addEvent", $this->getAll());
     }
 
     public function delete()

@@ -20,28 +20,27 @@ class DbService
     {
         $connectDB = $this->connecterDB->getConnection();
         pg_send_query($connectDB, $query);
-        var_dump($query);
+        // var_dump($query);
         return new \Promise(fn($res, $rej) => $res(pg_get_result($connectDB)));
         // return new \Promise(fn($res, $rej) =>  pg_wait($connectDB, function ($arg) use($res) {
-        //     var_dump($arg,"ARGUMENT IN PG_WAIT");
-        //     $res($arg);
-        // }
-        // ));
+       
     }
 
     public function prepare(string $statementName, string $statement): \Promise
     {
         $connectDB = $this->connecterDB->getConnection();
-        return new \Promise(fn($res, $rej) => pg_send_prepare($connectDB, $statementName, $statement) & pg_wait($connectDB, fn($arg) => $res($arg)));
+        // var_dump("IN PREPARE",$statementName,$statement);
+        pg_send_prepare($connectDB, $statementName, $statement);
+        return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res($arg)));
     }
 
     public function execute(string $statement, array $params = [])//: \Promise
-    {
+    {    
+       
         $connectDB = $this->connecterDB->getConnection();
-        var_dump($connectDB);
+        // var_dump("IN EXECUTE",$params,$statement);
         pg_send_execute($connectDB, $statement, $params);
-//        var_dump(pg_get_result());
-    //    return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res($arg)));
+       return new \Promise(fn($res, $rej) => pg_wait($connectDB, fn($arg) => $res($arg)));
     }
 
     public function delay($cb): \Promise

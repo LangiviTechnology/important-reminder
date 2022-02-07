@@ -18,7 +18,7 @@ class DBConnector
         if (!isset($this->connectDB)) {
             set_timeout(fn()=>($this->connectDB = pg_connect("host=$dbHost dbname=$dbName user=$dbUser password=$dbPassword")),5000);
         }
-        var_dump($connection);
+        // var_dump($connection);
     }
 
     function getConnection()
