@@ -11,7 +11,7 @@ class IndexController extends AbstractController
     {
     }
 
-    public function index(\HttpRequest $request, \HttpResponse $response)
+    public function index(\HttpRequest $request, AbstractResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
 

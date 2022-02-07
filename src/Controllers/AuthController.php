@@ -19,7 +19,7 @@ class AuthController extends AbstractController
     {
     }
 
-    public function registration(\HttpRequest $request, \HttpResponse $response)
+    public function registration(\HttpRequest $request, AbstractResponse $response)
     {
         try {
             $twig = $this->containerBuilder->get('twig');
@@ -63,7 +63,7 @@ class AuthController extends AbstractController
         }
     }
 
-	public function login(\HttpRequest $request, \HttpResponse $response)
+	public function login(\HttpRequest $request, AbstractResponse $response)
     {
         try {
             $twig = $this->containerBuilder->get('twig');
@@ -108,7 +108,7 @@ class AuthController extends AbstractController
         }
     }
 
-	public function logout(\HttpRequest $request, \HttpResponse $response)
+	public function logout(\HttpRequest $request, AbstractResponse $response)
     {
         try {
             $cookie = $request->headers['Cookie'] ?? '';
@@ -135,7 +135,7 @@ class AuthController extends AbstractController
         }
     }
 
-    public function refresh(\HttpRequest $request, \HttpResponse $response)
+    public function refresh(\HttpRequest $request, AbstractResponse $response)
     { 
         $cookie = $request->headers['Cookie'] ?? '';
         $refreshToken = getCookie($cookie, 'refreshToken');

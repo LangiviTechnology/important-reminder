@@ -17,7 +17,7 @@ class ExceptionHandler {
 	}
 
 	public function sendError(
-			\HttpResponse $response, 
+			AbstractResponse $response,
 			string $messsge, 
 			int $status = 500, 
 			array $payload = []

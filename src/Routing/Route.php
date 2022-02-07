@@ -66,7 +66,7 @@ class Route
         $this->isRequireAuth = $isRequireAuth;
     }
 
-    public function call(\HttpRequest $request, \HttpResponse $response)
+    public function call(\HttpRequest $request, AbstractResponse $response)
     {
         try {
             if ($this->isRequireAuth) {
@@ -82,7 +82,7 @@ class Route
         }
     }
 
-    public function execute(\HttpRequest $request, \HttpResponse $response)
+    public function execute(\HttpRequest $request, AbstractResponse $response)
     {
         if (is_string($this->controller)){
             [$controllerName, $action] = explode("::", $this->controller);

@@ -14,7 +14,7 @@ class AuthMiddleware
 
 	}
 
-    public function middleware(\HttpRequest $request, \HttpResponse $response): bool
+    public function middleware(\HttpRequest $request, AbstractResponse $response): bool
     {
         $cookie = $request->headers['Cookie'] ?? '';
         $accessToken = getCookie($cookie, 'accessToken');

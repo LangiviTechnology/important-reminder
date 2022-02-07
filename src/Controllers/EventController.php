@@ -13,13 +13,13 @@ class EventController extends AbstractController
     {
     }
 
-    public function findOne(\HttpRequest $request, \HttpResponse $response)
+    public function findOne(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: findOne\n");
     }
 
-    public function all(\HttpRequest $request, \HttpResponse $response)
+    public function all(\HttpRequest $request, AbstractResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
         $response->setHeader("Content-Type", "text/html; charset=utf-8");
@@ -27,7 +27,7 @@ class EventController extends AbstractController
         return;
     }
 
-	public function add(\HttpRequest $request, \HttpResponse $response)
+	public function add(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: add\n");
@@ -35,13 +35,13 @@ class EventController extends AbstractController
 
     }
 
-	public function update(\HttpRequest $request, \HttpResponse $response)
+	public function update(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: update\n");
     }
 
-	public function delete(\HttpRequest $request, \HttpResponse $response)
+	public function delete(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: delete\n");
