@@ -6,6 +6,9 @@ use Langivi\ImportantReminder\Routing\HttpMethods;
 
 // use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Handlers\ExceptionHandler;
+use Langivi\ImportantReminder\Response\HtmlResponse;
+use Langivi\ImportantReminder\Response\JsonResponse;
+
 use function Langivi\ImportantReminder\Utils\getFileMimeType;
 
 require 'vendor/autoload.php';
@@ -33,12 +36,12 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 
 $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($result) {
     global $loader;
-    $res->_type = 'html';
-    if ($req->headers["Sec-Fetch-Mode"] === 'cors') {
-        $res->_type = 'json';
-    }
-    // $logger = $loader->getContainer()->get(LoggerService::class);
     
+    $response = $req->headers["Sec-Fetch-Mode"] === 'cors' 
+        ? new JsonResponse($res) 
+        : new HtmlResponse($res);
+        
+    // $logger = $loader->getContainer()->get(LoggerService::class);
     //    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
     try {
         $publicUri = $this->publicPath . $req->uri;
@@ -61,11 +64,11 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         if (!$route) {
             throw new Exception('Path not found ' . $req->uri, 404);
         }
-        $route->call($req, $res);
+        $route->call($req, $response);
 
     } catch (\Throwable $th) {
         $exceptionHandler = $loader->getContainer()->get(ExceptionHandler::class);
-        $exceptionHandler->sendError($res, $th->getMessage(), $th->getCode(), ['uri' => $req->uri, 'method' => $method->value]);
+        $exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['uri' => $req->uri, 'method' => $method->value]);
     }
     
 });
