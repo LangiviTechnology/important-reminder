@@ -3,10 +3,10 @@ namespace Langivi\ImportantReminder\Response;
 
 class JsonResponse extends AbstractResponse
 {
-
-    public function send($value)
+    public function prepare(string $value)
     {
         $this->response->setHeader("Content-Type", "application/json");
-        $this->response->send($value);
+        return json_encode($value);
     }
+
 }

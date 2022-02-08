@@ -6,7 +6,13 @@ abstract class AbstractResponse
     {
     }
 
-    abstract public function send($value);
+    abstract protected function prepare(string $value);
+
+    abstract protected function error(array $value);
+
+    public function send(string $value){
+        return $this->response->send($this->prepare($value));
+    }
 
     function __call($name, $args) {
         $r = new \ReflectionClass($this->response);

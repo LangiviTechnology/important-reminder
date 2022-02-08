@@ -14,6 +14,12 @@ use Langivi\ImportantReminder\Handlers\ExceptionHandler;
 class Loader
 {
     private readonly ContainerBuilder $containerBuilder;
+    private static self $instance;
+
+    public static function get(): ?self
+    {
+        return self::$instance;
+    }
 
     public function __construct()
     {
@@ -87,7 +93,7 @@ class Loader
     }
 
     public function setupTokenService()
-    {   
+    {
         echo 'Setup Token service' . PHP_EOL;
         $tokenService = $this->containerBuilder->get(TokenService::class);
         $tokenService->setAccessToken(
@@ -100,7 +106,7 @@ class Loader
     }
 
     public function setupErrorHandler()
-    {   
+    {
         echo 'Setup Error handler' . PHP_EOL;
         $twig = $this->containerBuilder->get('twig');
         $errorHandler = $this->containerBuilder->get(ExceptionHandler::class);
@@ -129,7 +135,7 @@ class Loader
         // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
 //        var_dump($object->containerBuilder->getServiceIds());
-
+        self::$instance = $object;
         return $object;
     }
 }

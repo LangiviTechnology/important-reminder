@@ -14,7 +14,7 @@ use function Langivi\ImportantReminder\Utils\getFileMimeType;
 require 'vendor/autoload.php';
 require_once 'src/Utils/MimeType.php';
 
-const PORT = 81; 
+const PORT = 81;
 echo "Server is starting ..." . PHP_EOL;
 $loader = Loader::boot();
 $httpServer = new HttpServer(PORT, "tcp://0.0.0.0");
@@ -27,20 +27,19 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
     $mimeType = getFileMimeType($path);
     $res->setHeader("Content-Type", $mimeType);
     // var_dump($mimeType);
-    file_get_contents_async($path, 
-        fn(string $arg):HttpResponse|null=>
-            $res->setHeader("Content-Length", strlen($arg))->send($arg)); 
-        // FIX PROBLEM WITH ASYNC READ
+    file_get_contents_async($path,
+        fn(string $arg): HttpResponse|null => $res->setHeader("Content-Length", strlen($arg))->send($arg));
+    // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path" . PHP_EOL;
 }
 
 $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($result) {
     global $loader;
-    
-    $response = $req->headers["Sec-Fetch-Mode"] === 'cors' 
-        ? new JsonResponse($res) 
+
+    $response = $req->headers["Sec-Fetch-Mode"] === 'cors'
+        ? new JsonResponse($res)
         : new HtmlResponse($res);
-        
+
     // $logger = $loader->getContainer()->get(LoggerService::class);
     //    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
     try {
@@ -51,7 +50,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         }
         /**
          * @var $router Router
-         */    
+         */
         $router = $loader->getContainer()->get('router');
         $method = HttpMethods::tryFrom($req->method);
 
@@ -59,7 +58,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         if (!$method) {
             throw new Exception('Incorrect method' . $req->method, 404);
         }
-        
+
         $route = $router->matchFromPath($req->uri, $method);
         if (!$route) {
             throw new Exception('Path not found ' . $req->uri, 404);
@@ -70,10 +69,10 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         $exceptionHandler = $loader->getContainer()->get(ExceptionHandler::class);
         $exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['uri' => $req->uri, 'method' => $method->value]);
     }
-    
+
 });
 
-$httpServer->on_error(function ($error){
+$httpServer->on_error(function ($error) {
     echo 'error=================';
     var_dump($error);
     // $logger->error('', $error);
