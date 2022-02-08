@@ -25,7 +25,6 @@ class AuthController extends AbstractController
         try {
             $twig = $this->containerBuilder->get('twig');
             if ($request->method === 'GET') {
-                $response->setHeader("Content-Type", "text/html; charset=utf-8");
                 $response->send($twig->render('registration.twig', ['title' => 'Registration']));
                 return;
             }
@@ -37,8 +36,6 @@ class AuthController extends AbstractController
             );
             // var_dump($candidate->getData());
             // var_dump($candidate->validate());
-
-            $response->setHeader("Content-Type", "application/json");
             
             if (!$candidate->validate()) {
                 throw new Exception('Incorrect data', 400);
@@ -69,7 +66,6 @@ class AuthController extends AbstractController
         try {
             $twig = $this->containerBuilder->get('twig');
             if ($request->method === 'GET') {
-                $response->setHeader("Content-Type", "text/html; charset=utf-8");
                 $response->send($twig->render('login.twig', ['title' => 'Login']));
                 return;
             }
@@ -95,7 +91,6 @@ class AuthController extends AbstractController
                 throw new Exception('Incorrect login, password', 404);
             }
             
-            $response->setHeader("Content-Type", "application/json");
             $userData = $this->userService->login($user);
             $this->logger->info('Login user', ['email' => $userData->user->email]);
             
@@ -128,7 +123,6 @@ class AuthController extends AbstractController
             $response->setHeader("Set-Cookie",'refreshToken=0; Path=/; Max-Age=0;');
             $response->setHeader("Set-Cookie",'accessToken=0; Path=/; Max-Age=0;');
             
-            $response->setHeader("Content-Type", "application/json; charset=utf-8");
             $response->send(json_encode(['logout'=> true]));
         
         } catch (\Throwable $th) {
@@ -140,7 +134,6 @@ class AuthController extends AbstractController
     { 
         $cookie = $request->headers['Cookie'] ?? '';
         $refreshToken = getCookie($cookie, 'refreshToken');
-        $response->setHeader("Content-Type", "application/json");
         if (!$refreshToken){
             $response->setStatusCode(401);
             $response->send(json_encode(

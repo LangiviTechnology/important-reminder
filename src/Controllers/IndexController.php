@@ -15,8 +15,6 @@ class IndexController extends AbstractController
     public function index(\HttpRequest $request, AbstractResponse $response)
     {
         $twig = $this->containerBuilder->get('twig');
-
-        $response->setHeader("Content-Type", "text/html; charset=utf-8");
         $response->send($twig->render('index.twig', ['title' => 'Reminder']));
     }
 }
