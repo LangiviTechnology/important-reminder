@@ -36,10 +36,11 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($result) {
     global $loader;
 
-    $response = $req->headers["Sec-Fetch-Mode"] === 'cors'
-        ? new JsonResponse($res)
-        : new HtmlResponse($res);
-
+    $response = match ($req->headers["Sec-Fetch-Mode"]) {
+        'cors' =>  new JsonResponse($res),
+        default => new HtmlResponse($res),
+    };
+    
     // $logger = $loader->getContainer()->get(LoggerService::class);
     //    file_get_contents_async('server.php', fn($arg)=>var_dump($arg));
     try {
