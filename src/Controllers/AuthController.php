@@ -5,6 +5,7 @@ use Langivi\ImportantReminder\Entity\User;
 use Langivi\ImportantReminder\Services\UserService;
 use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Handlers\ExceptionHandler;
+use Langivi\ImportantReminder\Response\AbstractResponse;
 use Exception;
 
 use function Langivi\ImportantReminder\Utils\getCookie;

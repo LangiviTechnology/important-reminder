@@ -5,6 +5,7 @@ namespace Langivi\ImportantReminder\Routing;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Langivi\ImportantReminder\MiddleWares\AuthMiddleware;
 use Langivi\ImportantReminder\Handlers\ExceptionHandler;
+use Langivi\ImportantReminder\Response\AbstractResponse;
 use Exception;
 
 class Route

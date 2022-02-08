@@ -2,6 +2,7 @@
 
 namespace Langivi\ImportantReminder\MiddleWares;
 
+use Langivi\ImportantReminder\Response\AbstractResponse;
 use Langivi\ImportantReminder\Services\TokenService; 
 use function Langivi\ImportantReminder\Utils\getCookie;
 require_once 'src/Utils/getCookie.php';

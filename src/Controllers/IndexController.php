@@ -2,6 +2,7 @@
 namespace Langivi\ImportantReminder\Controllers;
 
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Response\AbstractResponse;
 
 class IndexController extends AbstractController
 {

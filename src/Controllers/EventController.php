@@ -4,6 +4,7 @@ namespace Langivi\ImportantReminder\Controllers;
 
 // use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Response\AbstractResponse;
 
 class EventController extends AbstractController
 {
