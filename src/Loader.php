@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoade
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Services\TokenService;
-use Langivi\ImportantReminder\Handlers\ExceptionHandler;
 
 
 class Loader
@@ -105,15 +104,6 @@ class Loader
         return $this;
     }
 
-    public function setupErrorHandler()
-    {
-        echo 'Setup Error handler' . PHP_EOL;
-        $twig = $this->containerBuilder->get('twig');
-        $errorHandler = $this->containerBuilder->get(ExceptionHandler::class);
-        $errorHandler->setTwig($twig);
-        return $this;
-    }
-
     public function getContainer()
     {
         return $this->containerBuilder;
@@ -130,7 +120,6 @@ class Loader
         $object->containerBuilder->compile();
         $object->setupLogger();
         $object->setupTokenService();
-        $object->setupErrorHandler();
         $object->containerBuilder->get(LoggerService::class)->info('Server started');
         // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
