@@ -25,7 +25,8 @@ class AuthController extends AbstractController
         try {
             $twig = $this->containerBuilder->get('twig');
             if ($request->method === 'GET') {
-                $response->send($twig->render('registration.twig', ['title' => 'Registration']));
+                $response->setTemplate('registration.twig');
+                $response->send(['title' => 'Registration']);
                 return;
             }
 
@@ -54,7 +55,7 @@ class AuthController extends AbstractController
             $maxAge = 3600 * 24 * 15;
             $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; HttpOnly');
             $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=900;');
-            $response->send(json_encode($userData));
+            $response->send($userData);
 
         } catch (\Throwable $th) {
             $this->exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
@@ -66,7 +67,8 @@ class AuthController extends AbstractController
         try {
             $twig = $this->containerBuilder->get('twig');
             if ($request->method === 'GET') {
-                $response->send($twig->render('login.twig', ['title' => 'Login']));
+                $response->setTemplate('login.twig');
+                $response->send(['title' => 'Login']);
                 return;
             }
 
@@ -98,7 +100,7 @@ class AuthController extends AbstractController
             $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; Secure; HttpOnly');
             $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=20;');
             
-            $response->send(json_encode($userData));
+            $response->send($userData);
         } catch (\Throwable $th) {
             $this->exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
         }
@@ -123,7 +125,7 @@ class AuthController extends AbstractController
             $response->setHeader("Set-Cookie",'refreshToken=0; Path=/; Max-Age=0;');
             $response->setHeader("Set-Cookie",'accessToken=0; Path=/; Max-Age=0;');
             
-            $response->send(json_encode(['logout'=> true]));
+            $response->send(['logout'=> true]);
         
         } catch (\Throwable $th) {
             $this->exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
@@ -132,27 +134,23 @@ class AuthController extends AbstractController
 
     public function refresh(\HttpRequest $request, AbstractResponse $response)
     { 
-        $cookie = $request->headers['Cookie'] ?? '';
-        $refreshToken = getCookie($cookie, 'refreshToken');
-        if (!$refreshToken){
-            $response->setStatusCode(401);
-            $response->send(json_encode(
-                (object)['error' => "Unauthorized"]
-            ));
-            return; 
-        }
-        $userData = $this->userService->refresh($refreshToken, '');
-        if (!$userData){
-            $response->setStatusCode(401);
-            $response->send(json_encode(
-                (object)['error' => "Unauthorized"]
-            ));
-            return; 
-        }
+        try {
+            $cookie = $request->headers['Cookie'] ?? '';
+            $refreshToken = getCookie($cookie, 'refreshToken');
+            if (!$refreshToken){
+                throw new Exception('Unauthorized', 401);
+            }
+            $userData = $this->userService->refresh($refreshToken, '');
+            if (!$userData){
+                throw new Exception('Unauthorized', 401);
+            }
 
-        $maxAge = 3600 * 24 * 15;
-        $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; HttpOnly');
-        $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=900;');
-        $response->send(json_encode($userData));
+            $maxAge = 3600 * 24 * 15;
+            $response->setHeader("Set-Cookie",'refreshToken=' . $userData->tokens->refreshToken . '; Path=/; Max-Age=' . $maxAge . '; HttpOnly');
+            $response->setHeader("Set-Cookie",'accessToken=' . $userData->tokens->accessToken . '; Path=/; Max-Age=900;');
+            $response->send($userData);
+        } catch (\Throwable $th) {
+            $this->exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
+        }
     }
 }
