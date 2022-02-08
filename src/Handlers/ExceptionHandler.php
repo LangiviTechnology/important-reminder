@@ -4,7 +4,6 @@ namespace Langivi\ImportantReminder\Handlers;
 
 use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Response\AbstractResponse;
-use Langivi\ImportantReminder\Response\JsonResponse;
 
 class ExceptionHandler {
 	public function __construct(
@@ -19,12 +18,11 @@ class ExceptionHandler {
 			int $status,
 			array $payload
 		) {
-
-		$statusCode = $status !== 0 ?? 500;
-		$response->setStatusCode($statusCode);
+		$statusCode = empty($status) ? 500 : $status;
 		$this->logger->error($message, ['status' => $statusCode, ...$payload]);
-		$response->error(['error' => $message]);
-
+		
+		$response->setStatusCode($statusCode);
+		$response->error(['error' => $message, 'status' => $statusCode]);
 	}
  }
  
