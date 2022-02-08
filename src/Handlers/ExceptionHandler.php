@@ -3,6 +3,8 @@
 namespace Langivi\ImportantReminder\Handlers;
 
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Response\AbstractResponse;
+use Langivi\ImportantReminder\Response\JsonResponse;
 
 class ExceptionHandler {
 	private $twig;
@@ -19,19 +21,19 @@ class ExceptionHandler {
 	public function sendError(
 			AbstractResponse $response,
 			string $messsge, 
-			int $status = 500, 
-			array $payload = []
+			int $status, 
+			array $payload
 		) {
-		$this->logger->error($messsge, ['status' => $status, ...$payload]);
+		
+		$status = $status ? $status : 500;
 		$response->setStatusCode($status);
+		$this->logger->error($messsge, ['status' => $status, ...$payload]);
 
-		if ($response->_type && $response->_type === 'json') {
-			$response->setHeader("Content-Type", "application/json");
+		if (get_class($response) === JsonResponse::class) {
             $response->send(json_encode((object)['error' => $messsge]));
             return;   
 		}
-
-		$response->setHeader("Content-Type", "text/html; charset=utf-8");
+		
 		$response->send(
 			$this->twig->render('error.twig', ['title' => 'Error', 'message' => $messsge, 'status' => $status])
 		);
