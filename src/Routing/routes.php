@@ -2,10 +2,12 @@
 
 use Langivi\ImportantReminder\Routing\HttpMethods;
 use Langivi\ImportantReminder\Routing\Route;
+use Langivi\ImportantReminder\Response\AbstractResponse;
+
 
 return [
     Route::create('/', 'IndexController::index', 'index', [HttpMethods::GET, HttpMethods::POST],),
-    Route::create('/test', function (HttpRequest $request, HttpResponse $response) {
+    Route::create('/test', function (HttpRequest $request, AbstractResponse $response) {
         $response->send("test");
     }, 'test', [HttpMethods::GET],),
     Route::create('/auth/login', 'AuthController::login', 'login', [HttpMethods::GET, HttpMethods::POST]),
