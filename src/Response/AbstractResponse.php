@@ -6,11 +6,14 @@ abstract class AbstractResponse
     {
     }
 
-    abstract protected function prepare(string $value);
+    abstract protected function prepare(array|object $value);
 
-    abstract protected function error(array $value);
+    abstract protected function error(array|object $value);
 
-    public function send(string $value){
+    public function send(array|object|string $value){
+        if (gettype($value) === 'string') {
+            return $this->response->send($value);
+        }
         return $this->response->send($this->prepare($value));
     }
 
