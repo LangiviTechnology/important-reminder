@@ -16,10 +16,10 @@
     <section>
         <form class="authorization-form">
             <h2>{{ title }}</h2>
-            <input id="login" required name="login" placeholder="Login"  type="text">
-            <input id="email" required name="email" placeholder="Email"  type="email" onchange="checkCorrectEmail(this.value)">
+            <input name="login" type="text" placeholder="Login" required>
+            <input name="email" type="email" placeholder="Email" required onchange="checkCorrectEmail(this.value)">
             <label for="email" class="email-label" style="color:red"></label>
-            <input required name="password" placeholder="Password"  type="password"><br/>
+            <input name="password" type="password" placeholder="Password" required minlength="4"><br/>
             <button type="submit">Registration</button>
         </form>
         <div class="notification"></div>
