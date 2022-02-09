@@ -52,11 +52,10 @@ class Migration
         }
     }
 
-    public function recursionMigration($index=0){
+    public function recursionMigration(int $index=0){
         if ($this->fileList) {
             if (array_key_exists($index, $this->fileList)){
                 $file = $this->fileList[$index];
-                // var_dump("FILE IN RECURSEMIGRATION", $file);
                 file_get_contents_async($file, function ($migration) use ($file, $index) {
                     $this->dbService->query(trim($migration))->then(function () use ($file, $index) {
                         $numbMigration = trim(preg_replace("/[^0-9]/", ' ', $file));
@@ -68,11 +67,11 @@ class Migration
                 // var_dump("in file wriyind EXIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIID");
                 $filePath = dirname(__FILE__) . '/lastmigration.txt';
                 file_put_contents_async($filePath, implode(',', $this->migrationList),fn() => var_dump("File written"));
-                var_dump("Міграцій більше не має");
+                print("Міграцій більше не має\n");
             }
             
         } else {
-            var_dump("Міграцій немає ");
+            print("Міграцій немає \n");
         }
     }
 }
