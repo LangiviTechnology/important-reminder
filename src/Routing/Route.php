@@ -55,7 +55,7 @@ class Route
         callable | string  $controller, 
         array $methods = [HttpMethods::GET], 
         array $vars = [],
-        bool  $isRequireAuth = false
+        bool $isRequireAuth = false
         )
     {
         // TODO is need check exist at least one method?
@@ -69,18 +69,15 @@ class Route
 
     public function call(\HttpRequest $request, AbstractResponse $response)
     {
-        try {
-            if ($this->isRequireAuth) {
-                $auth = $this->container->get(AuthMiddleware::class);
-                if (!$auth->middleware($request, $response)) {
-                    throw new Exception('Unauthorized', 401);
-                }
+        if ($this->isRequireAuth) {
+            $auth = $this->container->get(AuthMiddleware::class);
+            if (!$auth->middleware($request, $response)) {
+                
+                // TODO: rewrite to appropriate exception classes
+                throw new Exception('Unauthorized', 401);
             }
-            $this->execute($request, $response);
-        } catch (\Throwable $th) {
-            $exceptionHandler = $this->container->get(ExceptionHandler::class);
-            $exceptionHandler->sendError($response, $th->getMessage(), $th->getCode(), ['path'=> $request->uri]);
         }
+        $this->execute($request, $response);
     }
 
     public function execute(\HttpRequest $request, AbstractResponse $response)
