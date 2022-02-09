@@ -26,7 +26,6 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
     $mimeType = getFileMimeType($path);
     $res->setHeader("Content-Type", $mimeType);
-    // var_dump($mimeType);
     file_get_contents_async($path,
         fn(string $arg): HttpResponse|null => $res->setHeader("Content-Length", strlen($arg))->send($arg));
     // FIX PROBLEM WITH ASYNC READ
@@ -55,13 +54,14 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
         $router = $loader->getContainer()->get('router');
         $method = HttpMethods::tryFrom($req->method);
 
-        // TODO: Add Main error handler
         if (!$method) {
+            // TODO: rewrite to appropriate exception classes
             throw new Exception('Incorrect method' . $req->method, 404);
         }
 
         $route = $router->matchFromPath($req->uri, $method);
         if (!$route) {
+            // TODO: rewrite to appropriate exception classes
             throw new Exception('Path not found ' . $req->uri, 404);
         }
         $route->call($req, $response);
