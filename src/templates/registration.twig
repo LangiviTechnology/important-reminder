@@ -1,0 +1,27 @@
+{% extends 'base.twig' %}
+{% block scripts %}
+<script type="module" >
+    import {registration} from '/js/authorization.js';
+    import {checkCorrectEmail} from '/js/utils.js';
+
+    const inpuntEmail = document.querySelector('input[name="email"]');
+    inpuntEmail.onchange = checkCorrectEmail;
+    document.forms[0].onsubmit = registration;
+</script>
+{% endblock %}
+
+{% use 'header.twig'%}
+
+{% block body %}
+    <section>
+        <form class="authorization-form">
+            <h2>{{ title }}</h2>
+            <input name="login" type="text" placeholder="Login" required>
+            <input name="email" type="email" placeholder="Email" required onchange="checkCorrectEmail(this.value)">
+            <label for="email" class="email-label" style="color:red"></label>
+            <input name="password" type="password" placeholder="Password" required minlength="4"><br/>
+            <button type="submit">Registration</button>
+        </form>
+        <div class="notification"></div>
+    </section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+
+                           
+{% use 'header.twig'%}
+
+{% block scripts %}
+{% endblock %}
+
+
+{% block body %}
+
+    <div class="error-wrapper">
+        <p>Something worng</p>
+        <h1>{{status}}</h1>
+        <h2>{{error}}</h2>
+        {# <p>Error details:</p> #}
+        <button onclick="window.history.back()">Back</button>
+    </div>
+    
+{% endblock %}
+
