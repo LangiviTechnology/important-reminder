@@ -10,10 +10,11 @@ abstract class AbstractResponse
 
     abstract protected function error(array|object $value);
 
+    public function sendRaw(string $value){
+        return $this->response->send($value);
+    }
+
     public function send(array|object|string $value){
-        if (gettype($value) === 'string') {
-            return $this->response->send($value);
-        }
         return $this->response->send($this->prepare($value));
     }
 
