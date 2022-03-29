@@ -4,7 +4,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class AbstractController
 {
-    public readonly ContainerBuilder $containerBuilder;
+    protected readonly ContainerBuilder $containerBuilder;
 
     public function setContainer(ContainerBuilder $container): self
     {

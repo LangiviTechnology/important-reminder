@@ -11,10 +11,18 @@ use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoade
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
 use Langivi\ImportantReminder\Entity\AbstractEntity;
+use Langivi\ImportantReminder\Services\TokenService;
+
 
 class Loader
 {
     private readonly ContainerBuilder $containerBuilder;
+    private static self $instance;
+
+    public static function get(): ?self
+    {
+        return self::$instance;
+    }
 
     public function __construct()
     {
@@ -112,6 +120,19 @@ class Loader
         return $this;
     }
 
+    public function setupTokenService()
+    {
+        echo 'Setup Token service' . PHP_EOL;
+        $tokenService = $this->containerBuilder->get(TokenService::class);
+        $tokenService->setAccessToken(
+            $this->containerBuilder->getParameter('JWT_ACCESS_SECRET')
+        );
+        $tokenService->setRefreshToken(
+            $this->containerBuilder->getParameter('JWT_REFRESH_SECRET')
+        );
+        return $this;
+    }
+
     public function getContainer()
     {
         return $this->containerBuilder;
@@ -140,11 +161,12 @@ class Loader
             ->injectEntity();
         $object->containerBuilder->compile();
         $object->setupLogger();
+        $object->setupTokenService();
         $object->containerBuilder->get(LoggerService::class)->info('Server started');
         // var_dump($object->containerBuilder->get(IndexController::class));
 //        var_dump($object->containerBuilder->getParameter('env'));
 //        var_dump($object->containerBuilder->getServiceIds());
-
+        self::$instance = $object;
         return $object;
     }
 }

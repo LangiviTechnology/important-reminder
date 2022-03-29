@@ -1,10 +1,8 @@
 <?php
 namespace Langivi\ImportantReminder\Controllers;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Langivi\ImportantReminder\Services\LoggerService;
-
-
+use Langivi\ImportantReminder\Response\AbstractResponse;
 
 class IndexController extends AbstractController
 {
@@ -14,9 +12,10 @@ class IndexController extends AbstractController
     {
     }
 
-    public function index(\HttpRequest $request, \HttpResponse $response)
+    public function index(\HttpRequest $request, AbstractResponse $response)
     {
-        $response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        $response->send("Index controller: Index\n");
+        $twig = $this->containerBuilder->get('twig');
+        $response->setTemplate('index.twig');
+        $response->send(['title' => 'Reminder']);
     }
 }

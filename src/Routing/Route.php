@@ -3,6 +3,10 @@
 namespace Langivi\ImportantReminder\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Langivi\ImportantReminder\MiddleWares\AuthMiddleware;
+use Langivi\ImportantReminder\Handlers\ExceptionHandler;
+use Langivi\ImportantReminder\Response\AbstractResponse;
+use Exception;
 
 class Route
 {
@@ -31,12 +35,28 @@ class Route
      */
     private array $vars = [];
 
-    public static function create(string $path, callable | string $controller, string $name = '', array $methods = [HttpMethods::GET], array $vars = [])
+    private bool $isRequireAuth;
+
+    public static function create(
+        string $path, 
+        callable | string $controller, 
+        string $name = '', 
+        array $methods = [HttpMethods::GET], 
+        array $vars = [],
+        bool $isRequireAuth = false
+        )
     {
-        return new self($name, $path, $controller, $methods, $vars);
+        return new self($name, $path, $controller, $methods, $vars, $isRequireAuth);
     }
 
-    private function __construct(string $name, string $path, callable | string  $controller, array $methods = [HttpMethods::GET], array $vars = [])
+    private function __construct(
+        string $name, 
+        string $path, 
+        callable | string  $controller, 
+        array $methods = [HttpMethods::GET], 
+        array $vars = [],
+        bool $isRequireAuth = false
+        )
     {
         // TODO is need check exist at least one method?
         $this->name = $name;
@@ -44,9 +64,23 @@ class Route
         $this->controller = $controller;
         $this->methods = $methods;
         $this->vars = $vars;
+        $this->isRequireAuth = $isRequireAuth;
     }
 
-    public function call(\HttpRequest $request, \HttpResponse $response)
+    public function call(\HttpRequest $request, AbstractResponse $response)
+    {
+        if ($this->isRequireAuth) {
+            $auth = $this->container->get(AuthMiddleware::class);
+            if (!$auth->middleware($request, $response)) {
+                
+                // TODO: rewrite to appropriate exception classes
+                throw new Exception('Unauthorized', 401);
+            }
+        }
+        $this->execute($request, $response);
+    }
+
+    public function execute(\HttpRequest $request, AbstractResponse $response)
     {
         if (is_string($this->controller)){
             [$controllerName, $action] = explode("::", $this->controller);
@@ -55,9 +89,6 @@ class Route
         } elseif ($this->controller instanceof \Closure){
             ($this->controller)($request, $response);
         }
-
-        // $controllerClass = new ('\Langivi\ImportantReminder\Controllers\\' . $controller); //TODO rewrite to DI inject;
-        // $controllerClass->{$action}($request, $response);
     }
 
     public function match(string $uri, HttpMethods $method): bool

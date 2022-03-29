@@ -11,7 +11,7 @@ RUN docker-php-ext-install zip
 RUN ./install_composer.sh
 RUN  docker-php-ext-configure mysqli --with-mysqli=mysqlnd && \
     docker-php-ext-install mysqli
-ENV ENV=DEV
+ENV ENV=DE1V
 RUN php -m
 RUN docker-php-ext-install pgsql || exit 0
 RUN ./boot.sh

@@ -5,6 +5,7 @@ use  Langivi\ImportantReminder\Entity\Event;
 use Langivi\ImportantReminder\Connectors\DBConnector;
 use Langivi\ImportantReminder\Loader;
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Response\AbstractResponse;
 
 class EventController extends AbstractController
 {
@@ -14,7 +15,7 @@ class EventController extends AbstractController
     {
     }
 
-    public function findOne(\HttpRequest $request, \HttpResponse $response)
+    public function findOne(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: findOne\n");
@@ -48,7 +49,7 @@ class EventController extends AbstractController
        
     }
 
-	public function add(\HttpRequest $request, \HttpResponse $response)
+	public function add(\HttpRequest $request, AbstractResponse $response)
     {
         // $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         // $response->send("EventController: add\n");
@@ -61,13 +62,13 @@ class EventController extends AbstractController
 
     }
 
-	public function update(\HttpRequest $request, \HttpResponse $response)
+	public function update(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: update\n");
     }
 
-	public function delete(\HttpRequest $request, \HttpResponse $response)
+	public function delete(\HttpRequest $request, AbstractResponse $response)
     {
         $response->setHeader("Content-Type", "text/plain; charset=utf-8");
         $response->send("EventController: delete\n");
