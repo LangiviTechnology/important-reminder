@@ -49,3 +49,37 @@ class HttpResponse {
     public function end(string $data){}
 
 }
+
+
+
+ class Promise
+ {
+     private $dataStore;
+     private PromiseStatus $status = PromiseStatus::Pending;
+     private bool $promiseFinalised = false;
+
+     /**
+      * Promise constructor.
+      */
+     public function __construct(private \Closure $closure) {}
+     public static function resolve($data):Promise{}
+     public static function reject($data):Promise{}
+     public function then(callable $handler):Promise | mixed {}
+     public function catch(callable $handler):Promise | mixed {}
+
+     private function _then(callable $handle)
+     {
+     }
+     public function finally(callable $handler): void
+     {
+     }
+ }
+
+
+ enum PromiseStatus
+ {
+     case Pending;
+    case Resolved;
+    case Rejected;
+    }
+ 

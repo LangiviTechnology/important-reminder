@@ -1,0 +1,28 @@
+{% extends 'base.twig' %}
+{% use 'header.twig'%}
+ {% block scripts %}
+    {% endblock %}
+
+ {% block body %}
+    <section>
+            <form action="/events/add" method="POST" >
+            <label>Title
+                <input type="text" name="title" />
+            </label>
+            <label>Description
+                <input type="text" name="description" />
+            </label>
+            <label>Type
+                <input type="text" name="type" />
+            </label>
+            <label>Date
+                <input type="datetime-local" name="date" />
+            </label>
+            <label>Date reminder
+                <input type="date" name="date_reminder" />
+            </label>
+            <input type="submit">
+            </form>
+        </section>
+        
+    {% endblock %}

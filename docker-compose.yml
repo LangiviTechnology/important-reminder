@@ -10,3 +10,16 @@ services:
        - ./:/app
      ports:
        - 82:81
+     depends_on:
+      - postgres
+   postgres:
+      image: postgres 
+      environment: 
+        POSTGRES_DB: "reminderdb"
+        POSTGRES_USER: "reminderuser"
+        POSTGRES_PASSWORD: "4reminder321c"
+        PGDATA: "/var/postgresql/data"
+      volumes:
+        - ../data:/var/postgresql/data
+      ports:
+        - "5433:5432"

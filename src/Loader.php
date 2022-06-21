@@ -3,10 +3,14 @@
 namespace Langivi\ImportantReminder;
 
 
+use Langivi\ImportantReminder\Migrations\Migration;
+use Langivi\ImportantReminder\Connectors\DBConnector;
+use Langivi\ImportantReminder\Services\DbService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader\PhpFileLoader};
 use Langivi\ImportantReminder\Routing\Router;
 use Langivi\ImportantReminder\Services\LoggerService;
+use Langivi\ImportantReminder\Entity\AbstractEntity;
 use Langivi\ImportantReminder\Services\TokenService;
 
 
@@ -34,7 +38,7 @@ class Loader
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/templates');
 
         $twig = new \Twig\Environment($loader, [
-            'cache' => __DIR__ . '/cache/twig_cache',
+            // 'cache' => __DIR__ . '/cache/twig_cache',
         ]);
         $this->containerBuilder->set('twig', $twig);
     }
@@ -60,12 +64,23 @@ class Loader
         return $this;
     }
 
-    public function injectServices()
+    public function registerMigrations()
+    {
+        $this->containerBuilder->register(Migration::class, Migration::class)
+            ->setAutowired(true)->setPublic(true);
+    }
+
+    public function injectServices(): self
     {
         echo 'Inject Services' . PHP_EOL;
         $loader = new PhpFileLoader($this->containerBuilder, new FileLocator(__DIR__));
         $loader->load('config/configurator.php');
         return $this;
+    }
+    public function injectEntity ()
+    {   
+        AbstractEntity::setContainer($this->containerBuilder);
+        
     }
 
     public function setRouter()
@@ -75,6 +90,20 @@ class Loader
         $routes = require_once __DIR__ . '/Routing/routes.php';
         $router = new Router($routes);
         $this->containerBuilder->set('router', $router);
+        return $this;
+    }
+
+    public function injectServiceDB(): self
+    {
+        $dbHost = $this->containerBuilder->getParameter('DB_HOST');
+        $dbName = $this->containerBuilder->getParameter('DB_NAME');
+        $dbUser = $this->containerBuilder->getParameter('DB_USER');
+        $dbPassword = $this->containerBuilder->getParameter('DB_PASSWORD');
+        $this->containerBuilder->set('db_connecter', new DBConnector(
+            $dbHost, $dbName, $dbUser, $dbPassword
+        ));
+        DbService::setContainer($this->containerBuilder);
+        $this->containerBuilder->set('db_service',new DbService());
         return $this;
     }
 
@@ -109,6 +138,17 @@ class Loader
         return $this->containerBuilder;
     }
 
+    public static function bootCli()
+    {
+        $object = new self();
+        $object->containerBuilder->set(Loader::class, $object);
+        $object->injectServices()
+            ->injectServiceDB()
+            ->registerMigrations();
+        $object->containerBuilder->compile();
+        return $object;
+    }
+
     public static function boot()
     {
         $object = new self();
@@ -116,7 +156,9 @@ class Loader
         $object->containerBuilder->set(Loader::class, $object);
         $object->injectServices()
             ->injectControllers()
-            ->setRouter();
+            ->setRouter()
+            ->injectServiceDB()
+            ->injectEntity();
         $object->containerBuilder->compile();
         $object->setupLogger();
         $object->setupTokenService();
