@@ -1,5 +1,6 @@
 #!/bin/bash
 if ! which libtoolize >/dev/null; then
+       apt update
        apt install git libtool automake build-essential \
                                      autoconf \
                                      re2c \

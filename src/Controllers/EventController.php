@@ -21,7 +21,7 @@ class EventController extends AbstractController
         $response->send("EventController: findOne\n");
     }
 
-    public function all(\HttpRequest $request, \HttpResponse $response)
+    public function all(\HttpRequest $request, AbstractResponse $response)
     {  
         //  $eve = Event::create()->then(fn($data)=>var_dump("data in eventController",$data)); працює
 

@@ -71,11 +71,11 @@ class Event extends AbstractEntity
         $db=$object->dbService = self::$containerBuilder->get(DbService::class);
         return new \Promise(function($res,$rej)use(&$object,&$db){
             $db->prepare("addEvent", 'INSERT INTO event VALUES (DEFAULT,$1,$2,$3)')->then(function($data)use(&$object,&$db,$res){
-                $db->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(function($data)use(&$object,&$db,$res){
-                    $db->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(function($data)use(&$object,$res){
+//                $db->prepare("removeEvent", 'DELETE FROM event WHERE id = $1')->then(function($data)use(&$object,&$db,$res){
+//                    $db->prepare("updateEvent", 'UPDATE event SET title = $2 , description = $3 , type = $4 , date = $5, date_remind = $6 WHERE id = $1 ')->then(function($data)use(&$object,$res){
                         $res($object);
-                    });
-                });
+//                    });
+//                });
             });
 
         });

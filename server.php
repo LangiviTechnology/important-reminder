@@ -9,6 +9,7 @@ use Langivi\ImportantReminder\Handlers\ExceptionHandler;
 use Langivi\ImportantReminder\Response\HtmlResponse;
 use Langivi\ImportantReminder\Response\JsonResponse;
 
+use Langivi\ImportantReminder\Routing\Router;
 use function Langivi\ImportantReminder\Utils\getFileMimeType;
 
 require 'vendor/autoload.php';
@@ -26,8 +27,8 @@ function servePublic(string $path, HttpResponse $res, finfo $fileinfo): void
 {
     $mimeType = getFileMimeType($path);
     $res->setHeader("Content-Type", $mimeType);
-    file_get_contents_async($path,
-        fn(string $arg): HttpResponse|null => $res->setHeader("Content-Length", strlen($arg))->send($arg));
+    file_get_contents_async($path, //TODO find an excessive \0 symbol
+        fn(string $arg): HttpResponse|null => $res->setHeader("Content-Length", strlen($arg)-1)->send($arg));
     // FIX PROBLEM WITH ASYNC READ
     echo "Requested URI is $path" . PHP_EOL;
 }
@@ -36,6 +37,7 @@ $httpServer->on_request(function (HttpRequest $req, HttpResponse $res) use ($res
     global $loader;
 
     $response = match ($req->headers["Sec-Fetch-Mode"]) {
+        'no-cors' =>  new JsonResponse($res),
         'cors' =>  new JsonResponse($res),
         default => new HtmlResponse($res),
     };

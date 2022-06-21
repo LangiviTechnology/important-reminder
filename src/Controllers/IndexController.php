@@ -14,7 +14,7 @@ class IndexController extends AbstractController
 
     public function index(\HttpRequest $request, AbstractResponse $response)
     {
-        $twig = $this->containerBuilder->get('twig');
+
         $response->setTemplate('index.twig');
         $response->send(['title' => 'Reminder']);
     }

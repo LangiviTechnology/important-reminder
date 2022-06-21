@@ -14,7 +14,7 @@ return [
     Route::create('/auth/logout', 'AuthController::logout', 'logout', [HttpMethods::GET]),
     Route::create('/auth/registration', 'AuthController::registration', 'registration', [HttpMethods::GET, HttpMethods::POST]),
     Route::create('/auth/refresh', 'AuthController::refresh', 'refresh', [HttpMethods::GET]),
-    Route::create('/events/all', 'EventController::all', 'all', [HttpMethods::GET], [], true),
+    Route::create('/events/all', 'EventController::all', 'all', [HttpMethods::GET], [], false),
     Route::create('/events/add', 'EventController::add', 'add', [HttpMethods::POST]),
     Route::create('/events/update', 'EventController::update', 'update', [HttpMethods::PUT]),
     Route::create('/events/delete', 'EventController::delete', 'delete', [HttpMethods::DELETE]),
